@@ -10,11 +10,6 @@ const courseSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    instructor: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User", // Referencing User schema
-        required: true
-    },
     price: {
         type: Number,
         required: true,
