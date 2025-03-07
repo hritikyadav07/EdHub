@@ -1,7 +1,13 @@
 import express from 'express';
 import mongoose from 'mongoose';
+import dotenv from 'dotenv';
 
-mongoose.connect("mongodb+srv://2k22cscore2212760:wjoMfKUjjdQxTMv4@courseapp.v6obx.mongodb.net/",
+dotenv.config();
+
+const secrect = process.env.MONGO_URI
+
+
+mongoose.connect(secrect,
     {dbName:"courseapp"}
 ).then(console.log("mongodb connected successfully...!"))
 .catch((err)=>console.log(err));

@@ -1,0 +1,4 @@
+password : wjoMfKUjjdQxTMv4
+username : 2k22cscore2212760
+
+project : courseapp
