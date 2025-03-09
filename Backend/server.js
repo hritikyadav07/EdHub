@@ -1,7 +1,7 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import {addCourse} from "./controller/course.js"
+import {addCourse , deleteCourse , showCourse ,showAllCourse} from "./controller/course.js"
 
 dotenv.config();
 const secrect = process.env.MONGO_URI
@@ -13,6 +13,7 @@ mongoose.connect(secrect,
 
 const app = express();
 app.use(express.json());
+// app.use(cors());
 
 //home 
 app.get('/',(req,res)=>{
@@ -20,6 +21,15 @@ app.get('/',(req,res)=>{
 })
 //add course done
 app.post("/courses/add", addCourse);
+
+//delete the course done
+app.get("/courses/delete/:id", deleteCourse);
+
+//show the course done
+app.get("/courses/:id",showCourse);
+
+//show all the courses 
+app.get("/courses",showAllCourse);
 
 const port = 5000;
 app.listen(port,(req,res)=>{
