@@ -1,5 +1,6 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose"; // ✅ Correct Import
 
+// ✅ Declare schema first
 const userSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -31,4 +32,5 @@ const userSchema = new mongoose.Schema({
     }
 });
 
+// ✅ Now, define the model after the schema
 export const User = mongoose.model("User", userSchema);
