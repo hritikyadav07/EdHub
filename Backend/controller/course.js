@@ -71,3 +71,29 @@ export const showAllCourse = async (req, res) => {
   }
 };
 
+// Update a course by ID
+export const updateCourse = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, description, price } = req.body;
+
+    // Check if course exists
+    const course = await Course.findById(id);
+    if (!course) {
+      return res.status(404).json({ error: "Course not found" });
+    }
+
+    // Update course fields
+    if (title) course.title = title;
+    if (description) course.description = description;
+    if (price) course.price = price;
+
+    await course.save();
+
+    res.status(200).json({ message: "Course updated successfully", course });
+  } catch (error) {
+    res.status(500).json({ error: "Internal Server Error", details: error.message });
+  }
+};
+
+
