@@ -1,4 +1,4 @@
-export const User = mongoose.model("User", userSchema);
+import mongoose from "mongoose";
 
 const courseSchema = new mongoose.Schema({
     title: {
@@ -15,12 +15,6 @@ const courseSchema = new mongoose.Schema({
         required: true,
         min: 0
     },
-    enrolledStudents: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "User"
-        }
-    ],
     createdAt: {
         type: Date,
         default: Date.now
