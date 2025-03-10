@@ -1,39 +1,54 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import {addCourse , deleteCourse , showCourse ,showAllCourse , updateCourse} from "./controller/course.js"
+import cors from 'cors';
+import cookieParser from 'cookie-parser';
 
+// Import routes
+import authRoutes from './routes/auth.js';
+import courseRoutes from './routes/courses.js';
+import enrollmentRoutes from './routes/enrollments.js';
+
+// Load config
 dotenv.config();
-const secrect = process.env.MONGO_URI
+const mongoUri = process.env.MONGO_URI;
 
-mongoose.connect(secrect,
-    {dbName:"courseapp"}
-).then(console.log("mongodb connected successfully...!"))
-.catch((err)=>console.log(err));
+// Connect to database
+mongoose.connect(mongoUri, { dbName: "courseapp" })
+  .then(() => console.log("MongoDB connected successfully...!"))
+  .catch((err) => console.error("MongoDB connection error:", err));
 
+// Initialize app
 const app = express();
+
+// Middleware
+app.use(cors({
+  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  credentials: true
+}));
 app.use(express.json());
-// app.use(cors());
+app.use(cookieParser());
 
-//home 
-app.get('/',(req,res)=>{
-    res.end("Home page");
-})
-//add course done
-app.post("/courses/add", addCourse);
+// Routes
+app.get('/', (req, res) => {
+  res.json({ message: "Welcome to EdHub API" });
+});
 
-//delete the course done
-app.get("/courses/delete/:id", deleteCourse);
+// Mount routers
+app.use('/api/auth', authRoutes);
+app.use('/api/courses', courseRoutes);
+app.use('/api/enrollments', enrollmentRoutes);
 
-//show the course done
-app.get("/courses/:id",showCourse);
+// Error handler
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({
+    success: false,
+    error: 'Server Error'
+  });
+});
 
-//show all the courses 
-app.get("/courses",showAllCourse);
-
-app.get("/courses/update/:id",updateCourse);
-
-const port = 5000;
-app.listen(port,(req,res)=>{
-    console.log(`server up and runnig at port : ${port}`);
-})
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});

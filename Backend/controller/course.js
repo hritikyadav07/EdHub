@@ -1,98 +1,227 @@
-import {Course} from "../model/Course.js"
+import { Course } from "../model/Course.js";
+import { User } from "../model/User.js";
 
-// Add a new course
+// @desc    Create new course
+// @route   POST /api/courses
+// @access  Private (Instructors)
 export const addCourse = async (req, res) => {
-  console.log("add course inside");
   try {
-    const { title, description, price } = req.body;
-    console.log(req.body);
-
-    if (!title || !description || !price) {
-      return res.status(400).json({ error: "All fields are required" });
-    }
-
-    const newCourse = new Course({ title, description, price });
-    await newCourse.save();
-    console.log("saved to db");
-
-    res.status(201).json({ message: "Course added successfully", course: newCourse });
+    // Add user id to req.body
+    req.body.instructor = req.user.id;
+    
+    const course = await Course.create(req.body);
+    
+    // Add course to user's created courses
+    await User.findByIdAndUpdate(req.user.id, {
+      $push: { createdCourses: course._id }
+    });
+    
+    res.status(201).json({
+      success: true,
+      data: course
+    });
   } catch (error) {
-    res.status(500).json({ error: "Internal Server Error", details: error.message });
+    res.status(400).json({
+      success: false,
+      error: error.message
+    });
   }
 };
 
-// Delete a course by ID
-export const deleteCourse = async (req, res) => {
+// @desc    Get all courses
+// @route   GET /api/courses
+// @access  Public
+export const showAllCourses = async (req, res) => {
   try {
-    const { id } = req.params; // Get course ID from URL params
-
-    // Check if the course exists
-    const course = await Course.findById(id);
-    if (!course) {
-      return res.status(404).json({ error: "Course not found" });
+    const { category, level, price, search } = req.query;
+    let query = {};
+    
+    // Build filter object based on query params
+    if (category && category !== 'all') {
+      query.category = category;
     }
-
-    // Delete the course
-    await Course.findByIdAndDelete(id);
-    res.status(200).json({ message: "Course deleted successfully" });
+    
+    if (level && level !== 'all') {
+      query.level = level;
+    }
+    
+    if (price) {
+      if (price === 'under50') {
+        query.price = { $lt: 50 };
+      } else if (price === '50to100') {
+        query.price = { $gte: 50, $lte: 100 };
+      } else if (price === 'over100') {
+        query.price = { $gt: 100 };
+      }
+    }
+    
+    if (search) {
+      query.$or = [
+        { title: { $regex: search, $options: 'i' } },
+        { description: { $regex: search, $options: 'i' } }
+      ];
+    }
+    
+    // Only return published courses for regular users
+    if (!req.user || req.user.role !== 'admin') {
+      query.published = true;
+    }
+    
+    const courses = await Course.find(query)
+      .populate('instructor', 'name avatar')
+      .select('-modules'); // Don't include modules for listing
+    
+    res.status(200).json({
+      success: true,
+      count: courses.length,
+      data: courses
+    });
   } catch (error) {
-    res.status(500).json({ error: "Internal Server Error", details: error.message });
+    res.status(400).json({
+      success: false,
+      error: error.message
+    });
   }
 };
 
-//show a course by id
+// @desc    Get single course
+// @route   GET /api/courses/:id
+// @access  Public
 export const showCourse = async (req, res) => {
   try {
-    const { id } = req.params; // Get ID from request URL
-    const course = await Course.findById(id); // Find course by ID
-
+    const course = await Course.findById(req.params.id)
+      .populate('instructor', 'name avatar bio');
+    
     if (!course) {
-      return res.status(404).json({ error: "Course not found" });
+      return res.status(404).json({
+        success: false,
+        error: 'Course not found'
+      });
     }
-
-    res.status(200).json(course); // Send the found course
+    
+    // Check if course is published or user is instructor/admin
+    if (!course.published && 
+        (!req.user || 
+         (req.user.id !== course.instructor._id.toString() && 
+          req.user.role !== 'admin'))) {
+      return res.status(403).json({
+        success: false,
+        error: 'Not authorized to access this course'
+      });
+    }
+    
+    res.status(200).json({
+      success: true,
+      data: course
+    });
   } catch (error) {
-    res.status(500).json({ error: "Internal Server Error", details: error.message });
+    res.status(400).json({
+      success: false,
+      error: error.message
+    });
   }
 };
 
-//show all the courses
-export const showAllCourse = async (req, res) => {
-  console.log("inside the showallcourse");
-  try {
-    const courses = await Course.find(); // Fetch all courses from DB
-    if (courses.length === 0) {
-      return res.status(404).json({ message: "No courses found" });
-    }
-
-    res.status(200).json(courses); // Send all courses
-  } catch (error) {
-    res.status(500).json({ error: "Internal Server Error", details: error.message });
-  }
-};
-
-// Update a course by ID
+// @desc    Update course
+// @route   PUT /api/courses/:id
+// @access  Private (Course owner or Admin)
 export const updateCourse = async (req, res) => {
   try {
-    const { id } = req.params;
-    const { title, description, price } = req.body;
-
-    // Check if course exists
-    const course = await Course.findById(id);
+    let course = await Course.findById(req.params.id);
+    
     if (!course) {
-      return res.status(404).json({ error: "Course not found" });
+      return res.status(404).json({
+        success: false,
+        error: 'Course not found'
+      });
     }
-
-    // Update course fields
-    if (title) course.title = title;
-    if (description) course.description = description;
-    if (price) course.price = price;
-
-    await course.save();
-
-    res.status(200).json({ message: "Course updated successfully", course });
+    
+    // Make sure user is course owner or admin
+    if (course.instructor.toString() !== req.user.id && req.user.role !== 'admin') {
+      return res.status(401).json({
+        success: false,
+        error: 'Not authorized to update this course'
+      });
+    }
+    
+    // Update lastUpdated date
+    req.body.lastUpdated = Date.now();
+    
+    course = await Course.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true
+    });
+    
+    res.status(200).json({
+      success: true,
+      data: course
+    });
   } catch (error) {
-    res.status(500).json({ error: "Internal Server Error", details: error.message });
+    res.status(400).json({
+      success: false,
+      error: error.message
+    });
+  }
+};
+
+// @desc    Delete course
+// @route   DELETE /api/courses/:id
+// @access  Private (Course owner or Admin)
+export const deleteCourse = async (req, res) => {
+  try {
+    const course = await Course.findById(req.params.id);
+    
+    if (!course) {
+      return res.status(404).json({
+        success: false,
+        error: 'Course not found'
+      });
+    }
+    
+    // Make sure user is course owner or admin
+    if (course.instructor.toString() !== req.user.id && req.user.role !== 'admin') {
+      return res.status(401).json({
+        success: false,
+        error: 'Not authorized to delete this course'
+      });
+    }
+    
+    // Remove course from instructor's createdCourses array
+    await User.findByIdAndUpdate(course.instructor, {
+      $pull: { createdCourses: course._id }
+    });
+    
+    await course.deleteOne();
+    
+    res.status(200).json({
+      success: true,
+      data: {}
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      error: error.message
+    });
+  }
+};
+
+// @desc    Get courses by instructor
+// @route   GET /api/courses/instructor
+// @access  Private (Instructor)
+export const getInstructorCourses = async (req, res) => {
+  try {
+    const courses = await Course.find({ instructor: req.user.id });
+    
+    res.status(200).json({
+      success: true,
+      count: courses.length,
+      data: courses
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      error: error.message
+    });
   }
 };
 
