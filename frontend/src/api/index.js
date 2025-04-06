@@ -43,4 +43,22 @@ export const enrollmentAPI = {
   updateCourseProgress: (courseId, progress) => api.put(`/courses/${courseId}/progress`, { progress }),
 };
 
+// Admin API endpoints
+export const adminAPI = {
+  // Dashboard and analytics
+  getDashboardStats: () => api.get('/admin/stats'),
+  getCourseAnalytics: (params) => api.get('/admin/courses/analytics', { params }),
+  
+  // User management
+  getAllUsers: (params) => api.get('/admin/users', { params }),
+  updateUserRole: (userId, roleData) => api.put(`/admin/users/${userId}/role`, roleData),
+  
+  // Course management
+  getAdminCourses: () => api.get('/admin/courses'),
+  createCourse: (courseData) => api.post('/admin/courses', courseData),
+  getCourse: (id) => api.get(`/admin/courses/${id}`),
+  updateCourse: (id, courseData) => api.put(`/admin/courses/${id}`, courseData),
+  deleteCourse: (id) => api.delete(`/admin/courses/${id}`),
+};
+
 export default api;

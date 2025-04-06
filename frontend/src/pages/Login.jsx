@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
 import Card from '../components/Card';
 import Input from '../components/Input';
@@ -15,28 +15,32 @@ function Login() {
   });
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+  const navigate = useNavigate();
+
   const handleChange = (e) => {
-    const { id, value, type, checked } = e.target;
+    const { name, value, type, checked } = e.target;
     setFormData(prev => ({
       ...prev,
-      [id]: type === 'checkbox' ? checked : value
+      [name]: type === 'checkbox' ? checked : value
     }));
     
     // Clear error when user starts typing
-    if (errors[id]) {
-      setErrors(prev => ({
-        ...prev,
-        [id]: null
-      }));
+    if (errors[name]) {
+      setErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors[name];
+        return newErrors;
+      });
     }
   };
 
   const validateForm = () => {
     const newErrors = {};
     
-    if (!formData.email.trim()) {
+    if (!formData.email) {
       newErrors.email = 'Email is required';
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = 'Email address is invalid';
     }
     
     if (!formData.password) {
@@ -58,6 +62,7 @@ function Login() {
         await new Promise(resolve => setTimeout(resolve, 1500));
         // Redirect to dashboard would go here
         console.log('Login successful!');
+        navigate('/dashboard');
       } catch {
         setErrors({ form: 'Invalid email or password' });
       } finally {
@@ -96,6 +101,7 @@ function Login() {
             <Input
               label="Email address"
               id="email"
+              name="email"
               type="email"
               value={formData.email}
               onChange={handleChange}
@@ -107,6 +113,7 @@ function Login() {
               <Input
                 label="Password"
                 id="password"
+                name="password"
                 type="password"
                 value={formData.password}
                 onChange={handleChange}
@@ -153,7 +160,7 @@ function Login() {
         </Card>
       </div>
     </div>
-  )
+  );
 }
 
-export default Login
+export default Login;

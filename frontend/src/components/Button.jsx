@@ -1,92 +1,92 @@
+import React from 'react';
 import { motion } from 'framer-motion';
 import { useTheme } from '../context/ThemeContext';
+import Loader from './Loader';
 
 const variants = {
   primary: {
-    base: 'bg-primary-600 text-white',
-    hover: 'hover:bg-primary-700',
-    active: 'active:bg-primary-800',
+    light: 'bg-primary-600 text-white hover:bg-primary-700',
+    dark: 'bg-primary-600 text-white hover:bg-primary-700'
   },
   secondary: {
-    base: 'bg-gray-200 text-gray-800',
-    hover: 'hover:bg-gray-300',
-    active: 'active:bg-gray-400',
-    dark: 'dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600',
+    light: 'bg-secondary-600 text-white hover:bg-secondary-700',
+    dark: 'bg-secondary-600 text-white hover:bg-secondary-700'
+  },
+  success: {
+    light: 'bg-green-600 text-white hover:bg-green-700',
+    dark: 'bg-green-600 text-white hover:bg-green-700'
+  },
+  danger: {
+    light: 'bg-red-600 text-white hover:bg-red-700',
+    dark: 'bg-red-600 text-white hover:bg-red-700'
+  },
+  warning: {
+    light: 'bg-yellow-500 text-white hover:bg-yellow-600',
+    dark: 'bg-yellow-500 text-white hover:bg-yellow-600'
+  },
+  info: {
+    light: 'bg-blue-500 text-white hover:bg-blue-600',
+    dark: 'bg-blue-500 text-white hover:bg-blue-600'
   },
   outline: {
-    base: 'border-2 border-primary-600 text-primary-600',
-    hover: 'hover:bg-primary-50',
-    active: 'active:bg-primary-100',
-    dark: 'dark:border-primary-400 dark:text-primary-400 dark:hover:bg-gray-800',
-  },
+    light: 'border border-gray-300 text-gray-700 bg-white hover:bg-gray-50',
+    dark: 'border border-gray-600 text-gray-200 bg-transparent hover:bg-gray-800'
+  }
 };
 
 const sizes = {
-  sm: 'px-3 py-1.5 text-sm',
-  md: 'px-4 py-2 text-base',
-  lg: 'px-6 py-3 text-lg',
+  xs: 'px-2.5 py-1.5 text-xs',
+  sm: 'px-3 py-2 text-sm',
+  md: 'px-4 py-2 text-sm',
+  lg: 'px-5 py-3 text-base',
+  xl: 'px-6 py-3.5 text-base'
 };
 
 export default function Button({
   children,
+  type = 'button',
   variant = 'primary',
   size = 'md',
-  className = '',
   isLoading = false,
   disabled = false,
+  className = '',
   onClick,
-  type = 'button',
   ...props
 }) {
   const { theme } = useTheme();
-  const currentVariant = variants[variant];
+  const currentVariant = variants[variant] || variants.primary;
+  const currentSize = sizes[size] || sizes.md;
 
   return (
     <motion.button
       type={type}
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
-      disabled={disabled || isLoading}
+      transition={{ duration: 0.1 }}
+      disabled={isLoading || disabled}
       onClick={onClick}
       className={`
-        ${currentVariant.base}
-        ${currentVariant.hover}
-        ${currentVariant.active}
-        ${currentVariant.dark || ''}
-        ${sizes[size]}
-        rounded-md font-medium
-        transition-all duration-200
-        focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2
-        disabled:opacity-60 disabled:cursor-not-allowed
+        ${currentVariant[theme === 'dark' ? 'dark' : 'light']}
+        ${currentSize}
+        font-medium rounded-md
+        transition-colors duration-200
+        focus:outline-none focus:ring-2 focus:ring-offset-2 
+        ${theme === 'dark' ? 'focus:ring-offset-gray-900' : ''}
+        focus:ring-primary-500
+        ${isLoading || disabled ? 'opacity-70 cursor-not-allowed' : ''}
+        flex items-center justify-center
         ${className}
       `}
       {...props}
     >
-      <span className="flex items-center justify-center">
-        {isLoading && (
-          <svg
-            className="animate-spin -ml-1 mr-3 h-5 w-5"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-          >
-            <circle
-              className="opacity-25"
-              cx="12"
-              cy="12"
-              r="10"
-              stroke="currentColor"
-              strokeWidth="4"
-            />
-            <path
-              className="opacity-75"
-              fill="currentColor"
-              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-            />
-          </svg>
-        )}
-        {children}
-      </span>
+      {isLoading ? (
+        <>
+          <Loader size="sm" className="mr-2" />
+          <span>Loading...</span>
+        </>
+      ) : (
+        children
+      )}
     </motion.button>
   );
 }

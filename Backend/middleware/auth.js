@@ -6,8 +6,9 @@ export const protect = async (req, res, next) => {
     let token;
 
     // Get token from authorization header
-    if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+    if (req.headers.authorization) {
         token = req.headers.authorization.split(' ')[1];
+
     } else if (req.cookies?.token) {
         // Get token from cookie
         token = req.cookies.token;
@@ -15,7 +16,7 @@ export const protect = async (req, res, next) => {
 
     // Check if token exists
     if (!token) {
-        return res.status(401).json({ success: false, error: 'Not authorized to access this route' });
+        return res.status(401).json({ success: false, error: 'Not authorized to access this token' });
     }
 
     try {

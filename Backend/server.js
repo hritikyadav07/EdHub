@@ -8,6 +8,7 @@ import cookieParser from 'cookie-parser';
 import authRoutes from './routes/auth.js';
 import courseRoutes from './routes/courses.js';
 import enrollmentRoutes from './routes/enrollments.js';
+import adminRoutes from './routes/admin.js';
 
 // Load config
 dotenv.config();
@@ -38,6 +39,7 @@ app.get('/', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/courses', courseRoutes);
 app.use('/api/enrollments', enrollmentRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Error handler
 app.use((err, req, res, next) => {

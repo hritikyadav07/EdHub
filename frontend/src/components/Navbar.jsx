@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '../context/ThemeContext';
+import { useAuth } from '../context/AuthContext';
 import { useState } from 'react';
 import { Menu, Transition } from '@headlessui/react';
 import {
@@ -16,6 +17,7 @@ import {
 
 function Navbar() {
   const { theme, toggleTheme, ThemeMenu, setIsThemeMenuOpen } = useTheme();
+  const { currentUser } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
 
   const navigation = {
@@ -33,6 +35,12 @@ function Navbar() {
       { name: 'My Dashboard', to: '/dashboard', icon: ChartBarIcon },
       { name: 'My Courses', to: '/dashboard/courses', icon: BookOpenIcon },
       { name: 'Profile', to: '/dashboard/profile', icon: UserCircleIcon },
+    ],
+    admin: [
+      { name: 'Admin Dashboard', to: '/admin', icon: ChartBarIcon },
+      { name: 'Manage Courses', to: '/admin/courses', icon: BookOpenIcon },
+      { name: 'Manage Users', to: '/admin/users', icon: UserCircleIcon },
+      { name: 'Analytics', to: '/admin/analytics', icon: ChartBarIcon },
     ]
   };
 
@@ -119,6 +127,9 @@ function Navbar() {
     </Menu>
   );
 
+  // Check if user is admin for conditional rendering
+  const isAdmin = currentUser && currentUser.role === 'admin';
+
   return (
     <motion.nav
       className={`sticky top-0 z-50 ${theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-white text-gray-800'} shadow-md`}
@@ -146,8 +157,18 @@ function Navbar() {
                 {item.name}
               </NavLink>
             ))}
-            <DropdownMenu title="Instructor" items={navigation.instructor} />
-            <DropdownMenu title="Dashboard" items={navigation.student} />
+            
+            {isAdmin && (
+              <DropdownMenu title="Admin" items={navigation.admin} />
+            )}
+            
+            {currentUser && currentUser.role === 'instructor' && (
+              <DropdownMenu title="Instructor" items={navigation.instructor} />
+            )}
+            
+            {currentUser && (
+              <DropdownMenu title="Dashboard" items={navigation.student} />
+            )}
 
             {/* Theme Toggle and Auth Buttons */}
             <div className="flex items-center space-x-4">
@@ -302,6 +323,29 @@ function Navbar() {
                     </Link>
                   </div>
                 </div>
+
+                {/* Add Admin section to mobile menu if user is admin */}
+                {isOpen && isAdmin && (
+                  <div className="pt-4 pb-3 border-t border-gray-700">
+                    <div className="px-2 space-y-1">
+                      {navigation.admin.map((item) => (
+                        <Link
+                          key={item.name}
+                          to={item.to}
+                          className={`block px-3 py-2 rounded-md text-base font-medium ${
+                            theme === 'dark'
+                              ? 'text-gray-300 hover:bg-gray-700 hover:text-white'
+                              : 'text-gray-700 hover:bg-gray-100'
+                          }`}
+                          onClick={() => setIsOpen(false)}
+                        >
+                          <item.icon className="inline-block h-5 w-5 mr-2" />
+                          {item.name}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </motion.div>
           )}
