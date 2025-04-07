@@ -7,7 +7,7 @@ import Input from '../components/Input';
 import Loader from '../components/Loader';
 import Alert from '../components/Alert';
 import Modal from '../components/Modal';
-import Select from '../components/Select';
+// import Select from '../components/Select';
 import Badge from '../components/Badge';
 import { PencilIcon, UserIcon, ExclamationCircleIcon } from '@heroicons/react/24/outline';
 

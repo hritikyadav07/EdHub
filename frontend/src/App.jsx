@@ -94,28 +94,6 @@ const AppContent = () => {
             </ProtectedRoute>
           } />
 
-          {/* Instructor routes */}
-          <Route path="/instructor/dashboard" element={
-            <InstructorRoute>
-              <Dashboard />
-            </InstructorRoute>
-          } />
-          <Route path="/instructor/courses" element={
-            <InstructorRoute>
-              <Dashboard />
-            </InstructorRoute>
-          } />
-          <Route path="/instructor/courses/create" element={
-            <InstructorRoute>
-              <Dashboard />
-            </InstructorRoute>
-          } />
-          <Route path="/instructor/analytics" element={
-            <InstructorRoute>
-              <Dashboard />
-            </InstructorRoute>
-          } />
-
           {/* Admin routes */}
           <Route path="/admin" element={
             <AdminRoute>

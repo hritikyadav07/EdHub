@@ -1,14 +1,14 @@
-const User = require('../model/User');
-const Course = require('../model/Course');
-const Payment = require('../model/Payment');
-const Review = require('../model/Review');
+import {User} from '../model/User.js';
+import {Course} from '../model/Course.js';
+import {Payment} from '../model/Payment.js';
+import {Review} from '../model/Review.js';
 
 /**
  * Get dashboard statistics
  * @route GET /api/admin/stats
  * @access Private/Admin
  */
-exports.getDashboardStats = async (req, res) => {
+export const getDashboardStats = async (req, res) => {
   try {
     const totalUsers = await User.countDocuments();
     const totalCourses = await Course.countDocuments();
@@ -59,7 +59,7 @@ exports.getDashboardStats = async (req, res) => {
  * @route GET /api/admin/users
  * @access Private/Admin
  */
-exports.getAllUsers = async (req, res) => {
+export const getAllUsers = async (req, res) => {
   try {
     const users = await User.find().select('-password');
     
@@ -81,7 +81,7 @@ exports.getAllUsers = async (req, res) => {
  * @route PUT /api/admin/users/:id/role
  * @access Private/Admin
  */
-exports.updateUserRole = async (req, res) => {
+export const updateUserRole = async (req, res) => {
   try {
     const { role } = req.body;
     
@@ -122,7 +122,7 @@ exports.updateUserRole = async (req, res) => {
  * @route GET /api/admin/courses
  * @access Private/Admin
  */
-exports.getAllCourses = async (req, res) => {
+export const getAllCourses = async (req, res) => {
   try {
     const courses = await Course.find()
       .populate('instructor', 'name email')
@@ -146,7 +146,7 @@ exports.getAllCourses = async (req, res) => {
  * @route POST /api/admin/courses
  * @access Private/Admin
  */
-exports.createCourse = async (req, res) => {
+export const createCourse = async (req, res) => {
   try {
     // Verify instructor exists
     const instructor = await User.findById(req.body.instructor);
@@ -176,7 +176,7 @@ exports.createCourse = async (req, res) => {
  * @route PUT /api/admin/courses/:id
  * @access Private/Admin
  */
-exports.updateCourse = async (req, res) => {
+export const updateCourse = async (req, res) => {
   try {
     const course = await Course.findByIdAndUpdate(
       req.params.id,
@@ -208,7 +208,7 @@ exports.updateCourse = async (req, res) => {
  * @route DELETE /api/admin/courses/:id
  * @access Private/Admin
  */
-exports.deleteCourse = async (req, res) => {
+export const deleteCourse = async (req, res) => {
   try {
     const course = await Course.findByIdAndDelete(req.params.id);
     
@@ -239,7 +239,7 @@ exports.deleteCourse = async (req, res) => {
  * @route GET /api/admin/courses/analytics
  * @access Private/Admin
  */
-exports.getCourseAnalytics = async (req, res) => {
+export const getCourseAnalytics = async (req, res) => {
   try {
     // Enrollment trends over the last 6 months
     const sixMonthsAgo = new Date();

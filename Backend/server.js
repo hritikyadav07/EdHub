@@ -15,7 +15,7 @@ dotenv.config();
 const mongoUri = process.env.MONGO_URI;
 
 // Connect to database
-mongoose.connect(mongoUri, { dbName: "courseapp" })
+mongoose.connect(mongoUri, { dbName: "edhub" })
   .then(() => console.log("MongoDB connected successfully...!"))
   .catch((err) => console.error("MongoDB connection error:", err));
 

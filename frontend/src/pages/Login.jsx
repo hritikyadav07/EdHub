@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
+import { useAuth } from '../context/AuthContext';
 import Card from '../components/Card';
 import Input from '../components/Input';
 import Button from '../components/Button';
@@ -8,6 +9,7 @@ import Alert from '../components/Alert';
 
 function Login() {
   const { theme } = useTheme();
+  const { login } = useAuth();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -57,14 +59,18 @@ function Login() {
     if (validateForm()) {
       setIsSubmitting(true);
       
-      // Simulate API call
       try {
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        // Redirect to dashboard would go here
-        console.log('Login successful!');
-        navigate('/dashboard');
-      } catch {
-        setErrors({ form: 'Invalid email or password' });
+        const result = await login({
+          email: formData.email, 
+          password: formData.password,
+          rememberMe: formData.rememberMe
+        });
+        
+        if (!result.success) {
+          setErrors({ form: result.error || 'Invalid email or password' });
+        }
+      } catch (error) {
+        setErrors({ form: 'An unexpected error occurred. Please try again.' });
       } finally {
         setIsSubmitting(false);
       }
