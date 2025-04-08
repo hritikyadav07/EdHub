@@ -95,3 +95,6 @@ userSchema.methods.matchPassword = async function(enteredPassword) {
 };
 
 export const User = mongoose.model("User", userSchema);
+
+
+//verified - true

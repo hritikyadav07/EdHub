@@ -26,14 +26,15 @@ export const addCourse = async (req, res) => {
       error: error.message
     });
   }
-};
+}; //woking properly - tested with postman
+
 
 // @desc    Get all courses
 // @route   GET /api/courses
 // @access  Public
 export const showAllCourses = async (req, res) => {
   try {
-    const { category, level, price, search } = req.query;
+    const { category='all', level='all', price, search } = req.query;
     let query = {};
     
     // Build filter object based on query params
@@ -82,7 +83,11 @@ export const showAllCourses = async (req, res) => {
       error: error.message
     });
   }
-};
+}; // working properly - tested with postman
+// show course processing the query params and returning the courses based on the filters applied.
+// The query params are category, level, price, and search. The function builds a query object based on the provided filters and then fetches the courses from the database. It also populates the instructor field with name and avatar, and excludes the modules field from the response.
+
+
 
 // @desc    Get single course
 // @route   GET /api/courses/:id
@@ -120,7 +125,7 @@ export const showCourse = async (req, res) => {
       error: error.message
     });
   }
-};
+}; // working properly - tested with postman
 
 // @desc    Update course
 // @route   PUT /api/courses/:id
@@ -162,7 +167,7 @@ export const updateCourse = async (req, res) => {
       error: error.message
     });
   }
-};
+}; // working properly - tested with postman
 
 // @desc    Delete course
 // @route   DELETE /api/courses/:id
@@ -191,11 +196,17 @@ export const deleteCourse = async (req, res) => {
       $pull: { createdCourses: course._id }
     });
     
+    // Remove course from enrolled students' enrolledCourses array
+    await User.updateMany(
+      { enrolledCourses: course._id },
+      { $pull: { enrolledCourses: course._id } }
+    );
+    
     await course.deleteOne();
     
     res.status(200).json({
       success: true,
-      data: {}
+      message: 'Course deleted successfully'
     });
   } catch (error) {
     res.status(400).json({
@@ -203,7 +214,7 @@ export const deleteCourse = async (req, res) => {
       error: error.message
     });
   }
-};
+}; //working properly - tested with postman
 
 // @desc    Get courses by instructor
 // @route   GET /api/courses/instructor
@@ -223,6 +234,8 @@ export const getInstructorCourses = async (req, res) => {
       error: error.message
     });
   }
-};
+}; // working properly - tested with postman
 
 
+
+//verfied - true

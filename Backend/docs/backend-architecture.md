@@ -23,6 +23,13 @@ This document provides a comprehensive overview of the EdHub backend architectur
 
 The EdHub backend is a RESTful API service built using Node.js and Express.js. It provides the necessary endpoints for the EdHub learning platform, including user authentication, course management, and enrollment features. The system follows the Model-View-Controller (MVC) architectural pattern to organize code and separate concerns.
 
+The architecture is designed with the following principles:
+- **Separation of Concerns**: Clear boundaries between data, business logic, and API layers
+- **Modularity**: Components are organized in a way that makes them easy to extend or replace
+- **Scalability**: Asynchronous operations and efficient database queries
+- **Security**: JWT-based authentication and role-based authorization
+- **Maintainability**: Consistent coding conventions and comprehensive documentation
+
 ## Tech Stack
 
 - **Node.js**: JavaScript runtime environment
@@ -34,6 +41,14 @@ The EdHub backend is a RESTful API service built using Node.js and Express.js. I
 - **dotenv**: For environment variable management
 - **cors**: For Cross-Origin Resource Sharing
 - **cookie-parser**: For handling HTTP cookies
+
+Additional libraries and tools:
+- **morgan**: HTTP request logger for debugging
+- **helmet**: Security middleware for HTTP headers
+- **express-rate-limit**: Rate limiting to prevent abuse
+- **slugify**: For generating URL-friendly slugs from course titles
+- **multer**: For handling file uploads (course images, user avatars)
+- **nodemon**: For development auto-reloading
 
 ## Project Structure
 
@@ -69,10 +84,11 @@ Backend/
 ### Server (server.js)
 The main entry point for the application that:
 - Configures Express and middleware
-- Connects to MongoDB
-- Defines base routes
-- Sets up error handling
-- Starts the HTTP server
+- Connects to MongoDB using Mongoose
+- Defines base routes and API versioning
+- Sets up error handling and security headers
+- Manages CORS configurations
+- Starts the HTTP server and logs startup status
 
 ### Routes
 Route files define API endpoints and connect them to their corresponding controller functions:
@@ -233,6 +249,45 @@ Mongoose schemas and models that define the structure of data and provide an int
   - Request: `{ progress, lessonId }`
   - Response: `{ success, data }`
 
+### Admin Routes (`/api/admin`)
+- `GET /api/admin/users` - Get all users with pagination and filtering
+  - Query params: `role`, `search`, `limit`, `page`
+  - Response: `{ success, count, pagination, data }`
+
+- `GET /api/admin/users/:id` - Get details for a specific user
+  - Response: `{ success, data }`
+
+- `PUT /api/admin/users/:id` - Update user details (admin only)
+  - Request: Updated user data
+  - Response: `{ success, data }`
+
+- `DELETE /api/admin/users/:id` - Delete a user (admin only)
+  - Response: `{ success, data: {} }`
+
+- `PUT /api/admin/users/:id/role` - Change a user's role (admin only)
+  - Request: `{ role: 'student' | 'instructor' | 'admin' }`
+  - Response: `{ success, data }`
+
+- `GET /api/admin/courses` - Get all courses with advanced filtering
+  - Query params: `instructor`, `status`, `minRating`, `maxPrice`, `limit`, `page`
+  - Response: `{ success, count, pagination, data }`
+
+- `PUT /api/admin/courses/:id/visibility` - Change course visibility (publish/unpublish)
+  - Request: `{ isPublished: boolean }`
+  - Response: `{ success, data }`
+
+- `GET /api/admin/analytics/users` - Get user registration statistics
+  - Query params: `period`, `startDate`, `endDate`
+  - Response: `{ success, data }`
+
+- `GET /api/admin/analytics/courses` - Get course creation and enrollment statistics
+  - Query params: `period`, `startDate`, `endDate`
+  - Response: `{ success, data }`
+
+- `GET /api/admin/analytics/revenue` - Get revenue statistics
+  - Query params: `period`, `startDate`, `endDate`
+  - Response: `{ success, data }`
+
 ## Authentication System
 
 The authentication system uses JSON Web Tokens (JWT) for secure, stateless authentication.
@@ -280,11 +335,16 @@ Client Request
     → CORS middleware
     → Express JSON parser
     → Cookie parser
-    → Authentication middleware
+    → Request logger (morgan)
+    → Security headers (helmet)
+    → Rate limiter
+    → Authentication middleware (verify JWT)
     → Authorization middleware (check if instructor)
+    → Input validation
     → Course routes
     → Course controller
     → Database operation
+    → Response formatting
     → Response
 ```
 
@@ -352,6 +412,54 @@ await Course.findByIdAndDelete(courseId);
 await User.deleteOne({ email: 'john@example.com' });
 ```
 
+### Aggregation Pipeline
+```javascript
+// Example: Get course statistics by category
+const statistics = await Course.aggregate([
+  { $group: { 
+    _id: '$category', 
+    count: { $sum: 1 },
+    avgRating: { $avg: '$rating.average' },
+    avgPrice: { $avg: '$price' }
+  }},
+  { $sort: { count: -1 } }
+]);
+```
+
+### Transactions
+```javascript
+// Example: Process enrollment with payment in a transaction
+const session = await mongoose.startSession();
+session.startTransaction();
+
+try {
+  // Create payment record
+  const payment = await Payment.create([{
+    user: userId,
+    course: courseId,
+    amount: course.price,
+    status: 'completed'
+  }], { session });
+  
+  // Update user's enrolled courses
+  await User.findByIdAndUpdate(userId, {
+    $push: { enrolledCourses: { course: courseId } }
+  }, { session });
+  
+  // Update course enrollment count
+  await Course.findByIdAndUpdate(courseId, {
+    $inc: { enrollments: 1 }
+  }, { session });
+  
+  await session.commitTransaction();
+} catch (error) {
+  await session.abortTransaction();
+  throw error;
+} finally {
+  session.endSession();
+}
+```
+
 ## Error Handling
 
 The backend implements consistent error handling to provide clear feedback to clients:
@@ -395,6 +503,27 @@ app.use((err, req, res, next) => {
     error: 'Server Error'
   });
 });
+```
+
+### Custom Error Classes
+The application includes custom error classes for different types of errors:
+
+```javascript
+class APIError extends Error {
+  constructor(message, statusCode) {
+    super(message);
+    this.statusCode = statusCode;
+    this.status = `${statusCode}`.startsWith('4') ? 'fail' : 'error';
+    this.isOperational = true;
+    
+    Error.captureStackTrace(this, this.constructor);
+  }
+}
+
+// Usage in controllers
+if (!course) {
+  throw new APIError('Course not found', 404);
+}
 ```
 
 ## Environment Configuration
@@ -678,3 +807,112 @@ When a new API version is needed:
 5. Provide deprecation notices for v1 features that will be removed
 
 This approach ensures a smooth transition for frontend clients when API changes are needed.
+
+## Performance Optimization
+
+The backend implements several strategies to ensure optimal performance:
+
+### Database Query Optimization
+- Proper indexing on frequently queried fields
+- Selective field projection to limit data transfer
+- Pagination to limit result set sizes
+- Caching for frequently accessed, rarely changed data
+
+```javascript
+// Example: Optimized course query with indexing and projection
+// Indexes defined in schema:
+// Course.index({ title: 'text', description: 'text' });
+// Course.index({ category: 1, level: 1 });
+
+const courses = await Course.find({ category: 'javascript', level: 'beginner' })
+  .select('title description price rating instructor')
+  .populate('instructor', 'name avatar')
+  .limit(10)
+  .skip(page * 10)
+  .sort('-createdAt');
+```
+
+### Caching
+For production, the system can be configured with Redis for caching:
+
+```javascript
+// Example: Caching course list with Redis
+const getCourses = async (req, res) => {
+  const cacheKey = `courses:${JSON.stringify(req.query)}`;
+  
+  // Try to get from cache first
+  const cachedData = await redisClient.get(cacheKey);
+  if (cachedData) {
+    return res.status(200).json(JSON.parse(cachedData));
+  }
+  
+  // If not in cache, query database
+  const courses = await Course.find(/* query based on req.query */);
+  
+  // Store in cache for 10 minutes
+  await redisClient.set(cacheKey, JSON.stringify({
+    success: true,
+    count: courses.length,
+    data: courses
+  }), 'EX', 600);
+  
+  res.status(200).json({
+    success: true,
+    count: courses.length,
+    data: courses
+  });
+};
+```
+
+## Security Measures
+
+The backend implements several security best practices:
+
+### Password Security
+- Passwords are hashed using bcrypt with appropriate salt rounds
+- Password reset tokens use time-limited crypto-secure tokens
+- Password requirements enforced (minimum length, complexity)
+
+### Request Security
+- CORS configuration to restrict access to trusted origins
+- Rate limiting to prevent brute force and DOS attacks
+- Helmet middleware to set secure HTTP headers
+- Input validation and sanitization to prevent injection attacks
+
+### JWT Implementation
+- Short-lived access tokens (default 30 days, configurable)
+- Tokens can be blacklisted on logout
+- Token verification checks issuer and audience claims
+- Tokens stored in HttpOnly cookies for XSS protection
+
+## Monitoring and Logging
+
+The application includes monitoring and logging for production usage:
+
+### Logging System
+- Request logging using Morgan
+- Error logging with timestamps and request details
+- Different log levels (error, warn, info, debug)
+- Log rotation for production environments
+
+### Performance Monitoring
+- Response time tracking
+- Database query performance metrics
+- Memory usage monitoring
+- API endpoint usage statistics
+
+## Scalability Considerations
+
+The backend is designed with scalability in mind:
+
+### Horizontal Scaling
+- Stateless authentication allows for multiple server instances
+- Database connection pooling for efficient resource usage
+- Load balancing compatible (no instance-specific state)
+- Containerization support for orchestration (Docker, Kubernetes)
+
+### Vertical Scaling
+- Efficient database query patterns
+- Pagination for large result sets
+- Asynchronous request processing
+- Optimized data models and indexing

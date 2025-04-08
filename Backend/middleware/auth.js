@@ -2,6 +2,9 @@ import jwt from 'jsonwebtoken';
 import { User } from '../model/User.js';
 
 // Protect routes
+
+// Middleware to protect routes and check for valid JWT token
+// This middleware checks if the user is authenticated by verifying the JWT token
 export const protect = async (req, res, next) => {
     let token;
 
@@ -29,9 +32,10 @@ export const protect = async (req, res, next) => {
     } catch (error) {
         return res.status(401).json({ success: false, error: 'Not authorized to access this route' });
     }
-};
+}; 
 
-// Grant access to specific roles
+// Middleware to authorize users based on their roles
+// This middleware checks if the user has the required role to access the route
 export const authorize = (...roles) => {
     return (req, res, next) => {
         if (!roles.includes(req.user.role)) {
@@ -43,3 +47,6 @@ export const authorize = (...roles) => {
         next();
     };
 };
+
+
+//EVERYTHING WORKING PROPERLY - TESTED WITH POSTMAN

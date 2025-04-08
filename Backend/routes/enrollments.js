@@ -8,3 +8,5 @@ router.route('/')
   .get(protect, getEnrolledCourses);
 
 export default router;
+
+// verified - true 

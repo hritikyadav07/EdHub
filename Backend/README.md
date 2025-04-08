@@ -18,6 +18,7 @@ This guide provides comprehensive information about the EdHub backend architectu
 Backend/
 │
 ├── controller/         # Business logic for handling requests
+│   ├── admin.js        # Admin controllers
 │   ├── auth.js         # Authentication controllers
 │   ├── course.js       # Course management controllers
 │   └── enrollment.js   # Enrollment controllers
@@ -32,6 +33,7 @@ Backend/
 │   └── User.js         # User schema and model
 │
 ├── routes/             # API route definitions
+│   ├── admin.js        # Admin routes
 │   ├── auth.js         # Authentication routes
 │   ├── courses.js      # Course routes
 │   └── enrollments.js  # Enrollment routes
@@ -43,24 +45,30 @@ Backend/
 
 ## Architecture Overview
 
-EdHub backend follows a Model-View-Controller (MVC) pattern:
+EdHub backend follows a Model-View-Controller (MVC) pattern with RESTful API principles:
 
-1. **Models (Data Layer)**: MongoDB schemas defined with Mongoose
+1. **Models (Data Layer)**: MongoDB schemas defined with Mongoose ODM
 2. **Controllers (Business Logic Layer)**: Handle request processing and response generation
 3. **Routes (Presentation Layer)**: Define API endpoints and connect them to controllers
+4. **Middleware**: Process requests before they reach route handlers (authentication, validation)
 
 The application uses:
 - **Express.js** as the web framework
 - **MongoDB** as the database with **Mongoose** ODM
-- **JWT** for authentication 
+- **JWT** for secure, stateless authentication 
 - **bcrypt.js** for password hashing
+- **dotenv** for environment variable management
+- **cors** for Cross-Origin Resource Sharing
+
+The system is designed with scalability in mind, using async/await patterns for non-blocking I/O operations and proper error handling throughout the codebase.
 
 ## Data Models
 
 ### User Model
 - Represents system users (students, instructors, admins)
 - Features role-based permissions and enrollment tracking
-- Handles password hashing and authentication
+- Handles password hashing and authentication using bcrypt
+- Supports JWT token generation for authentication
 - Relations:
   - Enrolled courses (references Course model)
   - Created courses (for instructors - references Course model)

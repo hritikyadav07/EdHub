@@ -36,10 +36,10 @@ app.get('/', (req, res) => {
 });
 
 // Mount routers
-app.use('/api/auth', authRoutes);
-app.use('/api/courses', courseRoutes);
-app.use('/api/enrollments', enrollmentRoutes);
-app.use('/api/admin', adminRoutes);
+app.use('/api/auth', authRoutes); //all auth routes working properly - tested with postman
+app.use('/api/courses', courseRoutes); //all course routes working properly - tested with postman
+app.use('/api/enrollments', enrollmentRoutes); //all enrollment routes working properly - tested with postman
+app.use('/api/admin', adminRoutes); //all admin routes working properly - tested with postman
 
 // Error handler
 app.use((err, req, res, next) => {

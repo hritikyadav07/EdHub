@@ -111,7 +111,7 @@ const courseSchema = new mongoose.Schema({
     published: {
         type: Boolean,
         default: false
-    },
+    },//update to true when course is published
     createdAt: {
         type: Date,
         default: Date.now
