@@ -1,51 +1,82 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { authAPI } from '../services/api';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [currentUser, setCurrentUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [initialCheckDone, setInitialCheckDone] = useState(false);
+  const [currentUser, setCurrentUser] = useState(() => {
+    // Check localStorage for existing user session
+    if (typeof window !== 'undefined' && window.localStorage) {
+      try {
+        const savedUser = localStorage.getItem('user');
+        return savedUser ? JSON.parse(savedUser) : null;
+      } catch (error) {
+        console.error('Error parsing user from localStorage:', error);
+        return null;
+      }
+    }
+    return null;
+  });
+  const [loading, setLoading] = useState(false);
+  const [initialCheckDone, setInitialCheckDone] = useState(true);
   const navigate = useNavigate();
 
-  // Check if user is already logged in
+  // Save user to localStorage whenever user state changes
   useEffect(() => {
-    const checkLoggedIn = async () => {
+    if (typeof window !== 'undefined' && window.localStorage) {
       try {
-        const token = localStorage.getItem('token');
-        if (token) {
-          const { data } = await authAPI.getCurrentUser();
-          setCurrentUser(data.user);
+        if (currentUser) {
+          localStorage.setItem('user', JSON.stringify(currentUser));
+        } else {
+          localStorage.removeItem('user');
         }
       } catch (error) {
-        console.error('Failed to fetch current user:', error);
-        localStorage.removeItem('token');
-      } finally {
-        setLoading(false);
-        setInitialCheckDone(true);
+        console.error('Error saving user to localStorage:', error);
       }
-    };
-
-    checkLoggedIn();
-  }, []);
+    }
+  }, [currentUser]);
 
   // Login function
   const login = async (credentials) => {
     setLoading(true);
     try {
-      const { data } = await authAPI.login(credentials);
-      if (data.success) {
-        localStorage.setItem('token', data.token);
-        setCurrentUser(data.user);
-        toast.success('Logged in successfully!');
-        navigate('/dashboard');
-        return { success: true };
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Mock authentication - check for admin credentials
+      let mockUser;
+      if (credentials.email === 'admin@edhub.com') {
+        mockUser = {
+          id: 1,
+          email: 'admin@edhub.com',
+          name: 'Admin User',
+          role: 'admin',
+          avatar: null
+        };
+      } else {
+        mockUser = {
+          id: 2,
+          email: credentials.email,
+          name: 'Student User',
+          role: 'student',
+          avatar: null
+        };
       }
+      
+      setCurrentUser(mockUser);
+      toast.success('Logged in successfully!');
+      
+      // Navigate based on role
+      if (mockUser.role === 'admin') {
+        navigate('/admin');
+      } else {
+        navigate('/dashboard');
+      }
+      
+      return { success: true };
     } catch (error) {
-      const message = error.response?.data?.error || 'Login failed';
+      const message = 'Login failed';
       toast.error(message);
       return { 
         success: false, 
@@ -60,16 +91,23 @@ export const AuthProvider = ({ children }) => {
   const register = async (userData) => {
     setLoading(true);
     try {
-      const { data } = await authAPI.register(userData);
-      if (data.success) {
-        localStorage.setItem('token', data.token);
-        setCurrentUser(data.user);
-        toast.success('Registration successful!');
-        navigate('/dashboard');
-        return { success: true };
-      }
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      const mockUser = {
+        id: Date.now(),
+        email: userData.email,
+        name: `${userData.firstName} ${userData.lastName}`,
+        role: userData.accountType || 'student',
+        avatar: null
+      };
+      
+      setCurrentUser(mockUser);
+      toast.success('Registration successful!');
+      navigate('/dashboard');
+      return { success: true };
     } catch (error) {
-      const message = error.response?.data?.error || 'Registration failed';
+      const message = 'Registration failed';
       toast.error(message);
       return { 
         success: false, 
@@ -84,15 +122,13 @@ export const AuthProvider = ({ children }) => {
   const logout = async () => {
     setLoading(true);
     try {
-      await authAPI.logout();
-      localStorage.removeItem('token');
+      localStorage.removeItem('user');
       setCurrentUser(null);
       toast.success('Logged out successfully');
       navigate('/');
     } catch (error) {
       console.error('Logout error:', error);
-      // Force logout on client side even if API call fails
-      localStorage.removeItem('token');
+      localStorage.removeItem('user');
       setCurrentUser(null);
       navigate('/');
     } finally {
@@ -100,15 +136,48 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Check if user is admin
+  const isAdmin = () => {
+    return currentUser?.role === 'admin';
+  };
+
+  // Mock login functions for demo
+  const mockAdminLogin = () => {
+    const adminUser = {
+      id: 1,
+      email: 'admin@edhub.com',
+      name: 'Admin User',
+      role: 'admin',
+      avatar: null
+    };
+    setCurrentUser(adminUser);
+    toast.success('Logged in as Admin!');
+  };
+
+  const mockStudentLogin = () => {
+    const studentUser = {
+      id: 2,
+      email: 'student@edhub.com',
+      name: 'Student User',
+      role: 'student',
+      avatar: null
+    };
+    setCurrentUser(studentUser);
+    toast.success('Logged in as Student!');
+  };
+
   return (
     <AuthContext.Provider value={{
       currentUser,
       isAuthenticated: !!currentUser,
+      isAdmin,
       loading,
       initialCheckDone,
       login,
       register,
-      logout
+      logout,
+      mockAdminLogin,
+      mockStudentLogin
     }}>
       {children}
     </AuthContext.Provider>

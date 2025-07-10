@@ -35,11 +35,23 @@ export const ThemeProvider = ({ children }) => {
   const [theme, setTheme] = useState(() => {
     if (typeof window !== 'undefined' && window.localStorage) {
       try {
-        const savedTheme = localStorage.getItem('theme');
+        const savedTheme = localStorage.getItem('theme') || 'light';
         if (savedTheme === 'system') {
           return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
         }
-        return savedTheme || 'light';
+        return savedTheme;
+      } catch (error) {
+        console.error('Error accessing localStorage:', error);
+        return 'light';
+      }
+    }
+    return 'light';
+  });
+
+  const [themePreference, setThemePreference] = useState(() => {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      try {
+        return localStorage.getItem('theme') || 'light';
       } catch (error) {
         console.error('Error accessing localStorage:', error);
         return 'light';
@@ -54,7 +66,7 @@ export const ThemeProvider = ({ children }) => {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     
     const handleChange = (e) => {
-      if (theme === 'system') {
+      if (themePreference === 'system') {
         setTheme(e.matches ? 'dark' : 'light');
       }
     };
@@ -62,28 +74,43 @@ export const ThemeProvider = ({ children }) => {
     mediaQuery.addEventListener('change', handleChange);
     
     return () => mediaQuery.removeEventListener('change', handleChange);
-  }, [theme]);
+  }, [themePreference]);
 
   useEffect(() => {
     if (typeof window !== 'undefined' && window.localStorage) {
       try {
-        localStorage.setItem('theme', theme);
+        localStorage.setItem('theme', themePreference);
       } catch (error) {
         console.error('Error setting theme in localStorage:', error);
       }
     }
     
+    // Apply theme to document with debugging
+    console.log('Applying theme:', theme);
     if (theme === 'dark') {
       document.documentElement.classList.add('dark');
+      console.log('Added dark class to document');
     } else {
       document.documentElement.classList.remove('dark');
+      console.log('Removed dark class from document');
     }
-  }, [theme]);
+    
+    // Verify class was applied
+    console.log('Current document classes:', document.documentElement.classList.toString());
+  }, [theme, themePreference]);
 
   const toggleTheme = () => {
     const newTheme = theme === 'light' ? 'dark' : 'light';
+    console.log('Toggling theme from', theme, 'to', newTheme);
+    
     setTheme(newTheme);
+    setThemePreference(newTheme);
+    
+    // Dismiss any existing theme toasts before showing new one
+    toast.dismiss();
+    
     toast.success(`${themes[newTheme].name} theme activated! ${themes[newTheme].icon}`, {
+      id: 'theme-toggle',
       style: {
         background: newTheme === 'dark' ? '#1F2937' : '#FFFFFF',
         color: newTheme === 'dark' ? '#FFFFFF' : '#1F2937',
@@ -92,12 +119,26 @@ export const ThemeProvider = ({ children }) => {
   };
 
   const setThemeWithToast = (newTheme) => {
-    setTheme(newTheme);
+    console.log('Setting theme with toast to:', newTheme);
+    
+    setThemePreference(newTheme);
+    
+    let actualTheme = newTheme;
+    if (newTheme === 'system') {
+      actualTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    
+    setTheme(actualTheme);
     setIsThemeMenuOpen(false);
+    
+    // Dismiss any existing theme toasts before showing new one
+    toast.dismiss();
+    
     toast.success(`${themes[newTheme].name} theme activated! ${themes[newTheme].icon}`, {
+      id: 'theme-menu',
       style: {
-        background: newTheme === 'dark' ? '#1F2937' : '#FFFFFF',
-        color: newTheme === 'dark' ? '#FFFFFF' : '#1F2937',
+        background: actualTheme === 'dark' ? '#1F2937' : '#FFFFFF',
+        color: actualTheme === 'dark' ? '#FFFFFF' : '#1F2937',
       }
     });
   };
@@ -132,8 +173,8 @@ export const ThemeProvider = ({ children }) => {
               key={key}
               onClick={() => setThemeWithToast(key)}
               className={`w-full text-left px-4 py-2 text-sm ${
-                theme === key
-                  ? 'bg-primary-600 text-white'
+                themePreference === key
+                  ? 'bg-blue-600 text-white'
                   : theme === 'dark'
                   ? 'text-gray-300 hover:bg-gray-700'
                   : 'text-gray-700 hover:bg-gray-100'
