@@ -1,45 +1,76 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 
+const bg = "https://static.wixstatic.com/media/c837a6_738c2403369b4176a2410bd54462f1df~mv2.jpg/v1/fill/w_1470,h_1381,al_b,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/c837a6_738c2403369b4176a2410bd54462f1df~mv2.jpg%22"
+
 function Hero() {
+  const [offsetX, setOffsetX] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setOffsetX(window.scrollY);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
-    <section id="home" className="relative min-h-screen flex items-center justify-center pt-16 overflow-hidden">
-      {/* Background Animation */}
-      <div className="absolute inset-0 -z-10">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-300/20 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-300/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
-      </div>
+    <section
+      id="home"
+      style={{
+        backgroundImage: `url(${bg})`,
+        backgroundSize: "110% auto",
+        backgroundPosition: `${-offsetX * 0.1}px center`,
+        backgroundRepeat: "no-repeat",
+        minHeight: "120vh",
+        transition: "background-position 0.2s",
+      }}
+    >
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        {/* Main Hero Content */}
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="max-w-4xl mx-auto"
-        >
-          <motion.h1 
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.8 }}
-            className="text-5xl md:text-7xl font-bold text-gray-900 dark:text-white mb-6"
-          >
-            Learn Without
-            <span className="block bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              Limits
-            </span>
-          </motion.h1>
+      <div
+        className="relative flex items-center justify-center pt-16 overflow-hidden"
+        style={{
+          minHeight: "120vh",
+          background: "rgba(25, 36, 55, 0.7)", // increased opacity for a darker overlay
+        }}
+      >
+        {/* Background Animation */}
+        <div className="absolute inset-0 -z-10 pointer-events-none">
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-300/20 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-300/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        </div>
 
-          <motion.p 
-            initial={{ opacity: 0, y: 30 }}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          {/* Main Hero Content */}
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, duration: 0.8 }}
-            className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-10 max-w-3xl mx-auto leading-relaxed"
+            transition={{ duration: 0.8 }}
+            className="max-w-4xl mx-auto"
           >
-            Discover thousands of courses from world-class instructors. 
-            Build skills that matter with EdHub's interactive learning platform.
-          </motion.p>            <motion.div 
+            <motion.h1
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2, duration: 0.8 }}
+              className="text-5xl md:text-7xl font-bold text-gray-900 dark:text-white mb-6"
+            >
+              Learn Without
+              <span className="block bg-gradient-to-r from-blue-700 to-purple-600 bg-clip-text text-transparent">
+                Limits
+              </span>
+            </motion.h1>
+
+            <motion.p
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4, duration: 0.8 }}
+              className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-10 max-w-3xl mx-auto leading-relaxed"
+            >
+              Discover thousands of courses from world-class instructors.
+              Build skills that matter with EdHub's interactive learning platform.
+            </motion.p>
+            <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6, duration: 0.8 }}
@@ -54,7 +85,7 @@ function Hero() {
                   Start Learning Today
                 </motion.button>
               </Link>
-              
+
               <Link to="/courses">
                 <motion.button
                   whileHover={{ scale: 1.05 }}
@@ -66,93 +97,98 @@ function Hero() {
               </Link>
             </motion.div>
 
-          {/* Stats */}
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8, duration: 0.8 }}
-            className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-3xl mx-auto"
-          >
-            {[
-              { number: "50K+", label: "Students" },
-              { number: "1K+", label: "Courses" },
-              { number: "100+", label: "Instructors" },
-              { number: "4.9", label: "Rating" }
-            ].map((stat, index) => (
-              <motion.div
-                key={stat.label}
-                initial={{ opacity: 0, scale: 0.5 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 1 + index * 0.1, duration: 0.5 }}
-                className="text-center"
-              >
-                <div className="text-3xl md:text-4xl font-bold text-blue-600 dark:text-blue-400 mb-2">
-                  {stat.number}
-                </div>
-                <div className="text-gray-600 dark:text-gray-300 font-medium">
-                  {stat.label}
-                </div>
-              </motion.div>
-            ))}
+            {/* Stats */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.8, duration: 0.8 }}
+              className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-3xl mx-auto"
+            >
+              {[
+                { number: "50K+", label: "Students" },
+                { number: "1K+", label: "Courses" },
+                { number: "100+", label: "Instructors" },
+                { number: "4.9", label: "Rating" }
+              ].map((stat, index) => (
+                <motion.div
+                  key={stat.label}
+                  initial={{ opacity: 0, scale: 0.5 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 1 + index * 0.1, duration: 0.5 }}
+                  className="text-center"
+                >
+                  <div className="text-3xl md:text-4xl font-bold text-blue-600 dark:text-blue-400 mt-5 mb-2">
+                    {stat.number}
+                  </div>
+                  <div className="text-gray-600 dark:text-gray-300 font-medium">
+                    {stat.label}
+                  </div>
+                </motion.div>
+              ))}
+            </motion.div>
           </motion.div>
-        </motion.div>
 
-        {/* Floating Elements */}
-        <motion.div
-          animate={{ 
-            y: [0, -20, 0],
-            rotate: [0, 5, -5, 0]
-          }}
-          transition={{ 
-            duration: 6,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
-          className="absolute top-20 left-10 hidden lg:block"
-        >
-          <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-2xl shadow-lg flex items-center justify-center text-white text-2xl">
-            📚
-          </div>
-        </motion.div>
+          {/* Floating Elements */}
+          <motion.div
+            animate={{
+              y: [0, -20, 0],
+              rotate: [0, 5, -5, 0]
+            }}
+            transition={{
+              duration: 6,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+            className="absolute top-40 left-20 hidden lg:block"
+          >
+            <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-violet-500 rounded-2xl shadow-lg flex items-center justify-center text-white text-2xl">
+              📚
+            </div>
+          </motion.div>
 
-        <motion.div
-          animate={{ 
-            y: [0, 20, 0],
-            rotate: [0, -5, 5, 0]
-          }}
-          transition={{ 
-            duration: 8,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 1
-          }}
-          className="absolute top-32 right-10 hidden lg:block"
-        >
-          <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-blue-500 rounded-xl shadow-lg flex items-center justify-center text-white text-xl">
-            🎓
-          </div>
-        </motion.div>
+          <motion.div
+            animate={{
+              y: [0, 20, 0],
+              rotate: [0, -5, 5, 0]
+            }}
+            transition={{
+              duration: 8,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: 1
+            }}
+            className="absolute top-52 right-20 hidden lg:block"
+          >
+            <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-blue-500 rounded-xl shadow-lg flex items-center justify-center text-white text-xl">
+              🎓
+            </div>
+          </motion.div>
 
-        <motion.div
-          animate={{ 
-            y: [0, -15, 0],
-            x: [0, 10, 0]
-          }}
-          transition={{ 
-            duration: 7,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 2
-          }}
-          className="absolute bottom-32 left-20 hidden lg:block"
-        >
-          <div className="w-14 h-14 bg-gradient-to-br from-purple-400 to-pink-500 rounded-2xl shadow-lg flex items-center justify-center text-white text-xl">
-            💡
-          </div>
-        </motion.div>
+          <motion.div
+            animate={{
+              y: [0, -15, 0],
+              x: [0, 10, 0]
+            }}
+            transition={{
+              duration: 7,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: 2
+            }}
+            className="absolute bottom-36 left-44 hidden lg:block"
+          >
+            <div className="w-14 h-14 bg-gradient-to-br from-purple-400 to-orange-500 rounded-2xl shadow-lg flex items-center justify-center text-white text-xl">
+              💡
+            </div>
+          </motion.div>
+        </div>
       </div>
     </section>
   )
 }
 
 export default Hero
+
+
+
+//done - dont touch except for mobile responsiveness

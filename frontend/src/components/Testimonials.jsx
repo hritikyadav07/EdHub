@@ -1,4 +1,5 @@
 import React from 'react'
+// eslint-disable-next-line no-unused-vars
 import { motion } from 'framer-motion'
 
 function Testimonials() {
@@ -33,50 +34,85 @@ function Testimonials() {
   ]
 
   return (
-    <section className="py-20 bg-white dark:bg-gray-900 transition-colors duration-300">
+    <section className="py-20 bg-white dark:bg-gray-900 transition-colors duration-300 relative z-10 mt-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          viewport={{ once: true, margin: "-150px" }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+          <motion.h2 
+            className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            viewport={{ once: true }}
+          >
             What Our <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Students Say</span>
-          </h2>
-          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+          </motion.h2>
+          <motion.p 
+            className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.6 }}
+            viewport={{ once: true }}
+          >
             Real stories from real students who transformed their careers with EdHub
-          </p>
+          </motion.p>
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {testimonials.map((testimonial, index) => (
             <motion.div
               key={testimonial.id}
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.2, duration: 0.8 }}
-              viewport={{ once: true }}
+              initial={{ opacity: 0, y: 80, scale: 0.8, rotateX: 30 }}
+              whileInView={{ opacity: 1, y: 0, scale: 1, rotateX: 0 }}
+              transition={{ 
+                delay: 0.8 + index * 0.25, 
+                duration: 0.8,
+                type: "spring",
+                stiffness: 100
+              }}
+              viewport={{ once: true, margin: "-100px" }}
               whileHover={{ 
-                y: -10,
+                y: -15,
+                scale: 1.03,
+                rotateX: -2,
                 transition: { duration: 0.3 }
               }}
               className="bg-gray-50 dark:bg-gray-800 p-8 rounded-2xl hover:shadow-xl transition-all duration-300 group relative"
             >
               {/* Quote Icon */}
-              <div className="absolute top-6 right-6 text-4xl text-blue-200 dark:text-blue-800 group-hover:text-blue-400 transition-colors duration-300">
+              <motion.div 
+                className="absolute top-6 right-6 text-4xl text-blue-200 dark:text-blue-800 group-hover:text-blue-400 transition-colors duration-300"
+                initial={{ opacity: 0, scale: 0, rotate: -180 }}
+                whileInView={{ opacity: 1, scale: 1, rotate: 0 }}
+                transition={{ 
+                  delay: 0.8 + index * 0.25 + 0.3, 
+                  duration: 0.6,
+                  type: "spring",
+                  stiffness: 200
+                }}
+                viewport={{ once: true }}
+              >
                 "
-              </div>
+              </motion.div>
 
               {/* Rating */}
               <div className="flex mb-6">
                 {[...Array(testimonial.rating)].map((_, i) => (
                   <motion.span
                     key={i}
-                    initial={{ opacity: 0, scale: 0 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: index * 0.2 + i * 0.1, duration: 0.3 }}
+                    initial={{ opacity: 0, scale: 0, rotate: 180 }}
+                    whileInView={{ opacity: 1, scale: 1, rotate: 0 }}
+                    transition={{ 
+                      delay: 0.8 + index * 0.25 + 0.4 + i * 0.1, 
+                      duration: 0.4,
+                      type: "spring",
+                      stiffness: 300
+                    }}
                     viewport={{ once: true }}
                     className="text-yellow-400 text-xl"
                   >
@@ -86,43 +122,106 @@ function Testimonials() {
               </div>
 
               {/* Content */}
-              <p className="text-gray-700 dark:text-gray-300 mb-8 leading-relaxed text-lg">
+              <motion.p 
+                className="text-gray-700 dark:text-gray-300 mb-8 leading-relaxed text-lg"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ 
+                  delay: 0.8 + index * 0.25 + 0.6, 
+                  duration: 0.6 
+                }}
+                viewport={{ once: true }}
+              >
                 {testimonial.content}
-              </p>
+              </motion.p>
 
               {/* Author */}
-              <div className="flex items-center">
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center text-white font-bold text-lg mr-4">
+              <motion.div 
+                className="flex items-center"
+                initial={{ opacity: 0, x: -30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ 
+                  delay: 0.8 + index * 0.25 + 0.8, 
+                  duration: 0.6 
+                }}
+                viewport={{ once: true }}
+              >
+                <motion.div 
+                  className="w-12 h-12 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center text-white font-bold text-lg mr-4"
+                  initial={{ scale: 0, rotate: 180 }}
+                  whileInView={{ scale: 1, rotate: 0 }}
+                  transition={{ 
+                    delay: 0.8 + index * 0.25 + 0.9, 
+                    duration: 0.5,
+                    type: "spring",
+                    stiffness: 200
+                  }}
+                  viewport={{ once: true }}
+                >
                   {testimonial.name.split(' ').map(n => n[0]).join('')}
-                </div>
+                </motion.div>
                 <div>
-                  <div className="font-bold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300">
+                  <motion.div 
+                    className="font-bold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300"
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ 
+                      delay: 0.8 + index * 0.25 + 1, 
+                      duration: 0.4 
+                    }}
+                    viewport={{ once: true }}
+                  >
                     {testimonial.name}
-                  </div>
-                  <div className="text-gray-600 dark:text-gray-400 text-sm">
+                  </motion.div>
+                  <motion.div 
+                    className="text-gray-600 dark:text-gray-400 text-sm"
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ 
+                      delay: 0.8 + index * 0.25 + 1.1, 
+                      duration: 0.4 
+                    }}
+                    viewport={{ once: true }}
+                  >
                     {testimonial.role} at {testimonial.company}
-                  </div>
+                  </motion.div>
                 </div>
-              </div>
+              </motion.div>
             </motion.div>
           ))}
         </div>
 
         {/* Call to Action */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6, duration: 0.8 }}
+          initial={{ opacity: 0, y: 60, scale: 0.9 }}
+          whileInView={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ delay: 1.6, duration: 0.8, type: "spring", stiffness: 100 }}
           viewport={{ once: true }}
           className="text-center mt-16 p-8 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-2xl"
         >
-          <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+          <motion.h3 
+            className="text-2xl font-bold text-gray-900 dark:text-white mb-4"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.8, duration: 0.6 }}
+            viewport={{ once: true }}
+          >
             Ready to Start Your Success Story?
-          </h3>
-          <p className="text-gray-600 dark:text-gray-300 mb-6">
+          </motion.h3>
+          <motion.p 
+            className="text-gray-600 dark:text-gray-300 mb-6"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ delay: 2, duration: 0.6 }}
+            viewport={{ once: true }}
+          >
             Join thousands of students who have already transformed their careers
-          </p>
+          </motion.p>
           <motion.button
+            initial={{ opacity: 0, scale: 0.8 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 2.2, duration: 0.6, type: "spring", stiffness: 150 }}
+            viewport={{ once: true }}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             className="px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-full text-lg hover:shadow-lg transition-all duration-300"
