@@ -1,8 +1,10 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import { useAuth } from '../context/AuthContext'
 
 function Signup() {
+  const { register, loading } = useAuth()
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -23,9 +25,8 @@ function Signup() {
     }))
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    // Handle signup logic here
     if (formData.password !== formData.confirmPassword) {
       alert('Passwords do not match!')
       return
@@ -34,7 +35,7 @@ function Signup() {
       alert('Please agree to the terms and conditions')
       return
     }
-    console.log('Signup attempt:', formData)
+    await register(formData)
   }
 
   return (

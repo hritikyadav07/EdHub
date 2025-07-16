@@ -1,17 +1,27 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import { useAuth } from '../context/AuthContext'
 
 function Login() {
+  const { login, loading } = useAuth()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [rememberMe, setRememberMe] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    // Handle login logic here - you can implement this yourself
-    console.log('Login attempt:', { email, password, rememberMe })
+    await login({ email, password, rememberMe })
+  }
+
+  // Quick login functions for testing
+  const handleAdminLogin = async () => {
+    await login({ email: 'admin@edhub.com', password: 'password123' })
+  }
+
+  const handleStudentLogin = async () => {
+    await login({ email: 'student@edhub.com', password: 'password123' })
   }
 
   
@@ -295,7 +305,7 @@ function Login() {
           </div>
 
           {/* Quick Login for Testing */}
-          {/* <div className="mt-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
+          <div className="mt-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
             <p className="text-sm text-yellow-800 dark:text-yellow-200 mb-3 text-center font-medium">
               Quick Login for Testing:
             </p>
@@ -313,7 +323,7 @@ function Login() {
                 Login as Student
               </button>
             </div>
-          </div> */}
+          </div>
 
           {/* Sign Up Link */}
           <div className="mt-6 text-center">

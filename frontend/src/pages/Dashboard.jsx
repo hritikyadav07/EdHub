@@ -1,21 +1,44 @@
-import React from 'react'
-import { motion } from 'framer-motion'
+import React, { useState, useEffect } from 'react'
+import { useAuth } from '../context/AuthContext'
+
+// Dashboard Components
+import DashboardNavbar from '../components/dashboard/DashboardNavbar'
+import DashboardStats from '../components/dashboard/DashboardStats'
+import QuickActions from '../components/dashboard/QuickActions'
+import RecentActivity from '../components/dashboard/RecentActivity'
+import ContinueLearning from '../components/dashboard/ContinueLearning'
+import CertificatesSection from '../components/dashboard/CertificatesSection'
 
 function Dashboard() {
+  const { currentUser } = useAuth()
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
+
+  // Sample data - in real app, this would come from an API
   const enrolledCourses = [
     {
       id: 1,
       title: "Complete Web Development Bootcamp",
       progress: 75,
       instructor: "Sarah Johnson",
-      nextLesson: "React Hooks Deep Dive"
+      nextLesson: "React Hooks Deep Dive",
+      duration: "8h"
     },
     {
       id: 2,
       title: "Data Science with Python",
       progress: 45,
       instructor: "Dr. Michael Chen", 
-      nextLesson: "Machine Learning Basics"
+      nextLesson: "Machine Learning Basics",
+      duration: "12h"
+    },
+    {
+      id: 3,
+      title: "UI/UX Design Fundamentals",
+      progress: 90,
+      instructor: "Emma Wilson",
+      nextLesson: "Final Project Review",
+      duration: "2h"
     }
   ]
 
@@ -25,99 +48,131 @@ function Dashboard() {
       course: "UI/UX Design Complete Course",
       completedDate: "2024-11-15",
       instructor: "Emma Wilson"
+    },
+    {
+      id: 2,
+      course: "JavaScript Fundamentals",
+      completedDate: "2024-10-28",
+      instructor: "John Smith"
     }
   ]
 
-  return (
-    <div className="pt-16 min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-        >
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">
-            My Learning Dashboard
-          </h1>
+  // Close profile menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (isProfileMenuOpen && !event.target.closest('.profile-dropdown')) {
+        setIsProfileMenuOpen(false)
+      }
+    }
 
-          {/* Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Enrolled Courses</h3>
-              <p className="text-3xl font-bold text-blue-600">{enrolledCourses.length}</p>
-            </div>
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Completed</h3>
-              <p className="text-3xl font-bold text-green-600">{certificates.length}</p>
-            </div>
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Certificates</h3>
-              <p className="text-3xl font-bold text-purple-600">{certificates.length}</p>
-            </div>
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Hours Learned</h3>
-              <p className="text-3xl font-bold text-orange-600">42</p>
-            </div>
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [isProfileMenuOpen])
+
+  return (
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <DashboardNavbar 
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        isProfileMenuOpen={isProfileMenuOpen}
+        setIsProfileMenuOpen={setIsProfileMenuOpen}
+      />
+      
+      <main className="pt-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          {/* Header */}
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+              Welcome back, {currentUser?.name?.split(' ')[0] || 'User'}! 
+            </h1>
+            <p className="text-lg text-gray-600 dark:text-gray-400">
+              Continue your learning journey and track your progress
+            </p>
           </div>
 
-          {/* Continue Learning */}
-          <div className="mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Continue Learning</h2>
-            <div className="space-y-4">
-              {enrolledCourses.map((course) => (
-                <div key={course.id} className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
-                  <div className="flex justify-between items-start mb-4">
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{course.title}</h3>
-                      <p className="text-gray-600 dark:text-gray-300">by {course.instructor}</p>
-                    </div>
-                    <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-                      Continue
-                    </button>
+          {/* Stats Cards */}
+          <DashboardStats 
+            enrolledCourses={enrolledCourses}
+            certificates={certificates}
+          />
+
+          {/* Quick Actions */}
+          <QuickActions />
+
+          {/* Main Content Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Left Column - Main Content */}
+            <div className="lg:col-span-2 space-y-8">
+              <ContinueLearning enrolledCourses={enrolledCourses} />
+              <CertificatesSection certificates={certificates} />
+            </div>
+
+            {/* Right Column - Sidebar */}
+            <div className="lg:col-span-1">
+              <RecentActivity />
+              
+              {/* Study Streak Card */}
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-6">
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-gradient-to-br from-orange-400 to-red-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z" />
+                    </svg>
                   </div>
-                  <div className="mb-2">
-                    <div className="flex justify-between text-sm">
-                      <span>Progress</span>
-                      <span>{course.progress}%</span>
-                    </div>
-                    <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                      <div 
-                        className="bg-blue-600 h-2 rounded-full" 
-                        style={{ width: `${course.progress}%` }}
-                      ></div>
-                    </div>
-                  </div>
-                  <p className="text-sm text-gray-600 dark:text-gray-300">
-                    Next: {course.nextLesson}
+                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-1">
+                    7 Day Streak! 🔥
+                  </h3>
+                  <p className="text-base text-gray-600 dark:text-gray-400">
+                    Keep up the great work! You're on fire.
                   </p>
                 </div>
-              ))}
-            </div>
-          </div>
+              </div>
 
-          {/* Certificates */}
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">My Certificates</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {certificates.map((cert) => (
-                <div key={cert.id} className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
-                  <div className="text-center">
-                    <div className="text-4xl mb-4">🏆</div>
-                    <h3 className="font-semibold text-gray-900 dark:text-white mb-2">{cert.course}</h3>
-                    <p className="text-gray-600 dark:text-gray-300 text-sm mb-2">by {cert.instructor}</p>
-                    <p className="text-gray-500 dark:text-gray-400 text-sm mb-4">
-                      Completed: {new Date(cert.completedDate).toLocaleDateString()}
-                    </p>
-                    <button className="w-full px-4 py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20">
-                      Download Certificate
-                    </button>
+              {/* Upcoming Deadlines */}
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+                  Upcoming Deadlines
+                </h3>
+                <div className="space-y-3">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                    <div className="flex-1">
+                      <p className="text-base font-medium text-gray-900 dark:text-white">
+                        Portfolio Project
+                      </p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                        Due in 2 days
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
+                    <div className="flex-1">
+                      <p className="text-base font-medium text-gray-900 dark:text-white">
+                        React Quiz
+                      </p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                        Due in 1 week
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                    <div className="flex-1">
+                      <p className="text-base font-medium text-gray-900 dark:text-white">
+                        Final Assessment
+                      </p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                        Due in 2 weeks
+                      </p>
+                    </div>
                   </div>
                 </div>
-              ))}
+              </div>
             </div>
           </div>
-        </motion.div>
-      </div>
+        </div>
+      </main>
     </div>
   )
 }

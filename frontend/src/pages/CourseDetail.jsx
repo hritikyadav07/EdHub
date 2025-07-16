@@ -67,9 +67,18 @@ function CourseDetail() {
   }
 
   return (
-    <div className="pt-16 min-h-screen">
+    <div className=" min-h-screen">
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-blue-600 to-purple-700 text-white py-16">
+      <section className="bg-gradient-to-br from-slate-800 to-purple-800 text-white py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col lg:flex-row items-center gap-8">
+            <div className="lg:w-2/3">
+              
+            </div>
+          </div>
+        </div>
+        </section>
+      <section className="pt-36 bg-gradient-to-r from-blue-600 to-purple-700 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2">
@@ -134,8 +143,14 @@ function CourseDetail() {
                 transition={{ delay: 0.3, duration: 0.8 }}
                 className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-2xl"
               >
-                <div className="w-full h-48 bg-gradient-to-br from-blue-400 to-purple-500 rounded-xl mb-6 flex items-center justify-center">
-                  <div className="text-6xl opacity-20">📚</div>
+                <div className="w-full h-48 bg-gradient-to-br from-blue-400 to-purple-500 rounded-xl mb-6 flex items-center justify-center"
+                  style={{
+                  backgroundImage: "url('https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=1200&q=80')",
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                  backgroundRepeat: "no-repeat",
+                  opacity: 0.7
+                }}>
                 </div>
 
                 <div className="flex items-center justify-between mb-6">
