@@ -11,8 +11,8 @@ function Navbar() {
   const menuItems = [
     { name: 'Who we are', href: '/' },
     { name: 'Learning Modules', href: '/courses' },
-    { name: 'Resources', href: '/about' },
-    { name: 'Our Team', href: '/team' },
+    // { name: 'Resources', href: '/about' },
+    { name: 'Our Team', href: '/about' },
     { name: 'Contact', href: '/contact' }
   ]
 
@@ -75,12 +75,16 @@ function Navbar() {
         </div>
         <div className='flex-1 flex-row mx-16  my-6'>
             <div className=' flex justify-end mb-3'>
-            <button className='px-8  text-white hover:text-gray-400 hover:border-white hover:border'>Login</button>
+            
+            <Link to="/login" className='px-8 py-2 text-white hover:text-gray-200 hover:bg-gray-500 '>Login</Link>
             <motion.button
-              whileHover={{ scale: 1.05 }}
+              whileHover={{ scale: 1.02 }}
             className='bg-blue-600 text-white px-10 py-2  
              hover:bg-transparent font-medium transition-colors duration-200 hover:border-white hover:border'>
-              Enroll Now</motion.button>
+              <Link to ="/signup" className='flex items-center justify-center'>
+              Enroll Now
+              </Link>
+              </motion.button>
             </div>
             <div className='flex justify-end mt-2'>
                 {menuItems.map((item, index) => (

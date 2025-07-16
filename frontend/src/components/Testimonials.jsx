@@ -35,13 +35,65 @@ function Testimonials() {
 
   return (
     <section className="py-20 bg-white dark:bg-gray-900 transition-colors duration-300 relative z-10 mt-10">
+      {/* Decorative Stars */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {[...Array(12)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute text-yellow-400 dark:text-yellow-300 opacity-20"
+            initial={{ opacity: 0, scale: 0, rotate: 0 }}
+            whileInView={{ opacity: 0.3, scale: 1, rotate: 360 }}
+            transition={{ 
+              delay: i * 0.1,
+              duration: 2,
+              repeat: Infinity,
+              repeatType: "reverse",
+              repeatDelay: 3
+            }}
+            viewport={{ once: true }}
+            style={{
+              left: `${10 + (i * 8)}%`,
+              top: `${5 + (i % 3) * 10}%`,
+              fontSize: i % 3 === 0 ? '16px' : i % 3 === 1 ? '12px' : '8px'
+            }}
+          >
+            ⭐
+          </motion.div>
+        ))}
+        
+        {/* Additional scattered stars */}
+        {[...Array(8)].map((_, i) => (
+          <motion.div
+            key={`star-${i}`}
+            className="absolute text-blue-400 dark:text-blue-300 opacity-15"
+            initial={{ opacity: 0, scale: 0 }}
+            whileInView={{ opacity: 0.25, scale: 1 }}
+            transition={{ 
+              delay: 0.5 + i * 0.15,
+              duration: 1.5,
+              repeat: Infinity,
+              repeatType: "reverse",
+              repeatDelay: 4
+            }}
+            viewport={{ once: true }}
+            style={{
+              right: `${5 + (i * 12)}%`,
+              top: `${3 + (i % 4) * 8}%`,
+              fontSize: i % 2 === 0 ? '10px' : '6px'
+            }}
+          >
+            ✨
+          </motion.div>
+        ))}
+      </div>
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
           viewport={{ once: true, margin: "-150px" }}
-          className="text-center mb-16"
+          className="text-center mb-16 relative"
         >
           <motion.h2 
             className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4"

@@ -19,19 +19,34 @@ function App() {
     <ThemeProvider>
       <Router>
         <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50  transition-colors duration-300">
-          <Navbar/>
           <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/courses" element={<Courses />} />
-            <Route path="/course/:id" element={<CourseDetail />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/admin" element={<AdminDashboard />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/contact" element={<Contact />} />
+            <Route
+              path="/login"
+              element={<Login />}
+            />
+            <Route
+              path="/signup"
+              element={<Signup />}
+            />
+            <Route
+              path="*"
+              element={
+                <>
+                  <Navbar />
+                  <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/courses" element={<Courses />} />
+                    <Route path="/course/:id" element={<CourseDetail />} />
+                    <Route path="/dashboard" element={<Dashboard />} />
+                    <Route path="/admin" element={<AdminDashboard />} />
+                    <Route path="/about" element={<About />} />
+                    <Route path="/contact" element={<Contact />} />
+                  </Routes>
+                  <Footer />
+                </>
+              }
+            />
           </Routes>
-          <Footer/>
           <Toaster 
             position="bottom-right"
             toastOptions={{

@@ -23,9 +23,9 @@ function Contact() {
   }
 
   return (
-    <div className="pt-16 min-h-screen">
+    <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-blue-600 to-purple-700 text-white py-16">
+      <section className="bg-gray-700 text-white pt-36 py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -41,7 +41,7 @@ function Contact() {
       </section>
 
       {/* Contact Content */}
-      <section className="py-16">
+      <section className="py-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             {/* Contact Form */}
@@ -49,12 +49,12 @@ function Contact() {
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8 }}
-              className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg"
+              className="bg-white  px-8 py-4   rounded-2xl shadow-lg"
             >
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Send us a message</h2>
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">Send us a message</h2>
+              <form onSubmit={handleSubmit} className="space-y-2">
                 <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label htmlFor="name" className="block text-sm font-medium text-gray-700  mb-2">
                     Name
                   </label>
                   <input
@@ -63,12 +63,12 @@ function Contact() {
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 border border-gray-300  rounded-lg bg-white  text-gray-900  focus:ring-2 focus:ring-blue-500"
                     required
                   />
                 </div>
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label htmlFor="email" className="block text-sm font-medium text-gray-700  mb-2">
                     Email
                   </label>
                   <input
@@ -77,12 +77,12 @@ function Contact() {
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-3 border border-gray-300 y-600 rounded-lg bg-white  text-gray-900  focus:ring-2 focus:ring-blue-500"
                     required
                   />
                 </div>
                 <div>
-                  <label htmlFor="subject" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label htmlFor="subject" className="block text-sm font-medium text-gray-700  mb-2">
                     Subject
                   </label>
                   <input
@@ -91,12 +91,12 @@ function Contact() {
                     name="subject"
                     value={formData.subject}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-3 border border-gray-300 y-600 rounded-lg bg-white  text-gray-900  focus:ring-2 focus:ring-blue-500"
                     required
                   />
                 </div>
                 <div>
-                  <label htmlFor="message" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
                     Message
                   </label>
                   <textarea
@@ -105,7 +105,7 @@ function Contact() {
                     rows={5}
                     value={formData.message}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-3 border border-gray-300 y-600 rounded-lg bg-white  text-gray-900  focus:ring-2 focus:ring-blue-500"
                     required
                   ></textarea>
                 </div>
@@ -128,46 +128,46 @@ function Contact() {
               className="space-y-8"
             >
               <div>
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Contact Information</h2>
+                <h2 className="text-2xl font-bold text-gray-900  mb-6">Contact Information</h2>
                 <div className="space-y-4">
                   <div className="flex items-center space-x-4">
-                    <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center">
+                    <div className="w-12 h-12 bg-blue-100  rounded-lg flex items-center justify-center">
                       <span className="text-blue-600 text-xl">📧</span>
                     </div>
                     <div>
-                      <h3 className="font-semibold text-gray-900 dark:text-white">Email</h3>
-                      <p className="text-gray-600 dark:text-gray-300">hello@edhub.com</p>
+                      <h3 className="font-semibold text-gray-900 ">Email</h3>
+                      <p className="text-gray-600 ">hello@edhub.com</p>
                     </div>
                   </div>
                   <div className="flex items-center space-x-4">
-                    <div className="w-12 h-12 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center">
+                    <div className="w-12 h-12 bg-green-100  rounded-lg flex items-center justify-center">
                       <span className="text-green-600 text-xl">📞</span>
                     </div>
                     <div>
-                      <h3 className="font-semibold text-gray-900 dark:text-white">Phone</h3>
-                      <p className="text-gray-600 dark:text-gray-300">+1 (555) 123-4567</p>
+                      <h3 className="font-semibold text-gray-900 ">Phone</h3>
+                      <p className="text-gray-600 ">+1 (555) 123-4567</p>
                     </div>
                   </div>
                   <div className="flex items-center space-x-4">
-                    <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center">
+                    <div className="w-12 h-12 bg-purple-100  rounded-lg flex items-center justify-center">
                       <span className="text-purple-600 text-xl">📍</span>
                     </div>
                     <div>
-                      <h3 className="font-semibold text-gray-900 dark:text-white">Address</h3>
-                      <p className="text-gray-600 dark:text-gray-300">123 Learning Street<br />Education City, EC 12345</p>
+                      <h3 className="font-semibold text-gray-900 ">Address</h3>
+                      <p className="text-gray-600 ">123 Learning Street<br />Education City, EC 12345</p>
                     </div>
                   </div>
                 </div>
               </div>
 
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Follow Us</h3>
+                <h3 className="text-lg font-semibold text-gray-900  mb-4">Follow Us</h3>
                 <div className="flex space-x-4">
                   {['Twitter', 'LinkedIn', 'Instagram', 'YouTube'].map((social) => (
                     <a
                       key={social}
                       href="#"
-                      className="w-10 h-10 bg-gray-200 dark:bg-gray-700 hover:bg-blue-600 rounded-full flex items-center justify-center text-gray-600 dark:text-gray-300 hover:text-white transition-all duration-300"
+                      className="w-10 h-10 bg-gray-200 0 hover:bg-blue-600 rounded-full flex items-center justify-center text-gray-600 300 hover:text-white transition-all duration-300"
                     >
                       {social === 'Twitter' && '🐦'}
                       {social === 'LinkedIn' && '💼'}
@@ -178,9 +178,9 @@ function Contact() {
                 </div>
               </div>
 
-              <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 p-6 rounded-lg">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Quick Response</h3>
-                <p className="text-gray-600 dark:text-gray-300">
+              <div className="bg-gradient-to-r from-blue-50 to-purple-50 900/20 900/20 p-6 rounded-lg">
+                <h3 className="text-lg font-semibold text-gray-900  mb-2">Quick Response</h3>
+                <p className="text-gray-600 300">
                   We typically respond to all inquiries within 24 hours. For urgent matters, please call us directly.
                 </p>
               </div>

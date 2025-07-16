@@ -14,33 +14,154 @@ function Login() {
     console.log('Login attempt:', { email, password, rememberMe })
   }
 
-  const handleAdminLogin = () => {
-    // You can implement admin login logic here
-    console.log('Admin login clicked')
-  }
-
-  const handleStudentLogin = () => {
-    // You can implement student login logic here
-    console.log('Student login clicked')
-  }
+  
 
   return (
-    <div className="pt-16 min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-900 dark:to-blue-900">
-      <div className="max-w-md w-full mx-4">
+    <div className="pt-8 min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-blue-900 dark:to-purple-900 relative overflow-hidden">
+      {/* Logo in top-left corner */}
+      <motion.div
+        initial={{ opacity: 0, x: -50 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.8, delay: 0.2 }}
+        className="fixed top-6 left-6 z-20"
+      >
+        <Link 
+          to="/" 
+          className="flex items-center space-x-2 group"
+        >
+          <div className="text-4xl font-bold  bg-clip-text text-transparent bg-white">
+            EdHub
+          <span
+                className='inline-block align-middle bg-blue-700'
+                style={{
+                  width: '5px',
+                  height: '5px',
+                  marginLeft: '4px',
+                  marginBottom: '6px',
+                  verticalAlign: 'bottom',
+                }}
+                ></span>
+          </div>
+        </Link>
+      </motion.div>
+
+      {/* Animated Background Elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        {/* Floating Circles */}
+        <motion.div
+          className="absolute -top-20 -left-20 w-72 h-72 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full blur-3xl"
+          animate={{
+            x: [0, 50, 0],
+            y: [0, 30, 0],
+            scale: [1, 1.1, 1],
+          }}
+          transition={{
+            duration: 20,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+        />
+        <motion.div
+          className="absolute -bottom-20 -right-20 w-96 h-96 bg-gradient-to-br from-purple-400/20 to-pink-400/20 rounded-full blur-3xl"
+          animate={{
+            x: [0, -30, 0],
+            y: [0, -50, 0],
+            scale: [1, 1.2, 1],
+          }}
+          transition={{
+            duration: 25,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+        />
+        <motion.div
+          className="absolute top-1/3 right-1/4 w-48 h-48 bg-gradient-to-br from-green-400/15 to-blue-400/15 rounded-full blur-2xl"
+          animate={{
+            x: [0, 20, 0],
+            y: [0, -40, 0],
+            scale: [1, 1.3, 1],
+          }}
+          transition={{
+            duration: 18,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+        />
+
+        {/* Floating Particles */}
+        {[...Array(20)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-2 h-2 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full opacity-30"
+            initial={{ 
+              x: Math.random() * window.innerWidth,
+              y: Math.random() * window.innerHeight,
+              scale: Math.random() * 0.5 + 0.5
+            }}
+            animate={{
+              y: [null, -20, null],
+              x: [null, Math.random() * 40 - 20, null],
+              opacity: [0.1, 0.4, 0.1]
+            }}
+            transition={{
+              duration: Math.random() * 10 + 10,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: Math.random() * 5
+            }}
+          />
+        ))}
+
+        {/* Grid Pattern */}
+        <div className="absolute inset-0 opacity-10 dark:opacity-5">
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-blue-500/20 to-transparent transform rotate-12 scale-150"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-purple-500/20 to-transparent transform -rotate-12 scale-150"></div>
+        </div>
+
+        {/* Subtle Stars */}
+        {[...Array(15)].map((_, i) => (
+          <motion.div
+            key={`star-${i}`}
+            className="absolute text-yellow-400 dark:text-yellow-300 opacity-20"
+            initial={{ 
+              x: Math.random() * window.innerWidth,
+              y: Math.random() * window.innerHeight,
+              scale: 0,
+              rotate: 0
+            }}
+            animate={{
+              scale: [0, 1, 0],
+              rotate: [0, 180, 360],
+              opacity: [0, 0.3, 0]
+            }}
+            transition={{
+              duration: Math.random() * 8 + 6,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: Math.random() * 10
+            }}
+            style={{
+              fontSize: Math.random() * 8 + 6 + 'px'
+            }}
+          >
+            ✨
+          </motion.div>
+        ))}
+      </div>
+
+      {/* Glass morphism overlay */}
+      <div className="absolute inset-0 bg-white/5 dark:bg-black/5 backdrop-blur-sm"></div>
+
+      <div className="max-w-md w-full mx-4 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-8"
+          className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/20 dark:border-gray-700/20 p-8"
         >
           {/* Logo and Title */}
           <div className="text-center mb-8">
-            <div className="flex items-center justify-center space-x-2 mb-4">
-              <div className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                EdHub
-              </div>
-              <div className="w-2 h-2 bg-blue-600 rounded-full animate-pulse"></div>
-            </div>
+            
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
               Welcome Back
             </h2>
@@ -174,7 +295,7 @@ function Login() {
           </div>
 
           {/* Quick Login for Testing */}
-          <div className="mt-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
+          {/* <div className="mt-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
             <p className="text-sm text-yellow-800 dark:text-yellow-200 mb-3 text-center font-medium">
               Quick Login for Testing:
             </p>
@@ -192,7 +313,7 @@ function Login() {
                 Login as Student
               </button>
             </div>
-          </div>
+          </div> */}
 
           {/* Sign Up Link */}
           <div className="mt-6 text-center">

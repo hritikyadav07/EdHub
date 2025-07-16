@@ -161,9 +161,9 @@ function Courses() {
   })
 
   return (
-    <div className="pt-16 min-h-screen">
+    <div className=" min-h-screen">
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-blue-600 to-purple-700 text-white py-16">
+      <section className=" pt-48 bg-slate-900 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -185,7 +185,7 @@ function Courses() {
                 placeholder="Search for courses, instructors, or topics..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full px-6 py-4 text-lg text-gray-900 rounded-full border-0 focus:ring-4 focus:ring-white/20 focus:outline-none"
+                className="w-full px-6 py-4 text-lg text-gray-900 rounded-full border-0 ring-4 ring-white/20 outline-none"
               />
               <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
                 <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -198,7 +198,7 @@ function Courses() {
       </section>
 
       {/* Filters and Content */}
-      <section className="py-12">
+      <section className="py-12 bg-violet-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col lg:flex-row gap-8">
             {/* Sidebar Filters */}
@@ -208,8 +208,8 @@ function Courses() {
               transition={{ duration: 0.8 }}
               className="lg:w-1/4 space-y-6"
             >
-              <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg">
-                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Filters</h3>
+              <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg mt-18">
+                <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-4">Filters</h3>
                 
                 {/* Category Filter */}
                 <div className="mb-6">
@@ -301,9 +301,14 @@ function Courses() {
                     className="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 group"
                   >
                     <div className="relative">
-                      <div className="w-full h-48 bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center">
-                        <div className="text-6xl opacity-20">📚</div>
-                      </div>
+                      <div className="w-full h-48  flex items-center justify-center"
+                        style={{
+                        backgroundImage: `linear-gradient(rgba(255,255,255,0.3), rgba(255,255,255,0.3)), url('${course.image}')`,
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center'
+                      }}
+                      >
+                        </div>
                       
                       {/* Badges */}
                       <div className="absolute top-4 left-4 flex flex-wrap gap-2">
