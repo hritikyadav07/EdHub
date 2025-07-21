@@ -210,7 +210,7 @@ function Stats() {
               boxShadow: "0 20px 40px rgba(255, 255, 255, 0.2)"
             }}
             whileTap={{ scale: 0.95 }}
-            className="px-8 py-4 bg-white text-blue-900 font-semibold rounded-full text-lg hover:bg-gray-100 transition-all duration-300"
+            className="px-8 py-4 bg-gradient-to-r from-[#1a237e] to-purple-900 text-white font-semibold rounded-full text-lg hover:from-purple-900 hover:to-[#1a237e] transition-all duration-300 border border-purple-500/30 shadow-lg shadow-purple-900/20"
           >
             Start Your Journey
           </motion.button>
