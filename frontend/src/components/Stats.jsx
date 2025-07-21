@@ -2,6 +2,55 @@ import React from 'react'
 // eslint-disable-next-line no-unused-vars
 import { motion } from 'framer-motion'
 
+
+const MovingGradient = () => {
+  return (
+    <div className="absolute inset-0 z-0 overflow-hidden">
+      {/* Static gradient background with purple corners */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background: 'radial-gradient(circle at center, rgba(15,35,95,0.98) 0%, rgba(10,20,65,0.99) 40%, rgba(0,10,45,1) 70%, rgba(0,5,25,1) 100%)',
+          filter: 'blur(45px)',
+        }}
+      />
+
+      {/* Purple corner gradients */}
+      <div className="absolute inset-0">
+        <div className="absolute top-0 left-0 w-[40%] h-[40%] bg-gradient-to-br from-purple-900/30 via-purple-800/10 to-transparent" />
+        <div className="absolute top-0 right-0 w-[40%] h-[40%] bg-gradient-to-bl from-indigo-900/30 via-purple-800/10 to-transparent" />
+        <div className="absolute bottom-0 left-0 w-[40%] h-[40%] bg-gradient-to-tr from-purple-900/30 via-purple-800/10 to-transparent" />
+        <div className="absolute bottom-0 right-0 w-[40%] h-[40%] bg-gradient-to-tl from-indigo-900/30 via-purple-800/10 to-transparent" />
+      </div>
+
+      {/* Royal blue accent layer */}
+      <div className="absolute inset-0 bg-gradient-to-b from-[#1a237e]/10 to-transparent" />
+
+      {/* Glass overlay with royal blue tint */}
+      <div className="absolute inset-0 backdrop-blur-sm bg-gradient-to-br from-[#1a237e]/5 to-black/10" />
+
+      {/* Static light streaks */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background: 'repeating-linear-gradient(45deg, transparent, transparent 100px, rgba(65,105,225,0.03) 200px, transparent 300px)',
+          backgroundSize: '200% 200%',
+          backgroundPosition: 'center'
+        }}
+      />
+
+      {/* Royal blue grid pattern */}
+      <div className="absolute inset-0" style={{
+        backgroundImage: 'radial-gradient(circle at 2px 2px, rgba(65,105,225,0.03) 1px, transparent 0)',
+        backgroundSize: '30px 30px'
+      }} />
+      
+      {/* Dark overlay with royal blue and purple tint */}
+      <div className="absolute inset-0 bg-gradient-radial from-[#0a1232]/70 via-[#0a1232]/70 to-[#1a1040]/70" />
+    </div>
+  );
+};
+
 function Stats() {
   const stats = [
     {
@@ -31,27 +80,8 @@ function Stats() {
   ]
 
   return (
-    <section className="py-20 bg-gradient-to-br from-blue-900 to-purple-900 relative overflow-hidden -mt-10 pt-20 -mb-10 pb-20">
-      {/* Enhanced Background Pattern */}
-      <div className="absolute inset-0 opacity-20">
-        {/* Subtle Grid Pattern */}
-        <div className="absolute inset-0" style={{
-          backgroundImage: 'radial-gradient(circle at 2px 2px, rgba(255,255,255,0.15) 1px, transparent 0)',
-          backgroundSize: '50px 50px'
-        }}></div>
-        
-        {/* Diagonal Lines */}
-        <div className="absolute inset-0" style={{
-          backgroundImage: 'linear-gradient(45deg, transparent 48%, rgba(255,255,255,0.08) 50%, transparent 52%)',
-          backgroundSize: '100px 100px'
-        }}></div>
-        
-        {/* Floating Circles */}
-        <div className="absolute top-20 left-20 w-32 h-32 bg-white/5 rounded-full"></div>
-        <div className="absolute top-40 right-32 w-24 h-24 bg-yellow-400/10 rounded-full"></div>
-        <div className="absolute bottom-32 left-40 w-28 h-28 bg-purple-400/8 rounded-full"></div>
-        <div className="absolute bottom-20 right-20 w-20 h-20 bg-blue-400/12 rounded-full"></div>
-      </div>
+    <section className="py-20 relative overflow-hidden -mt-10 pt-20 -mb-10 pb-20">
+      <MovingGradient />
 
       {/* Cascading Animation Container */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
