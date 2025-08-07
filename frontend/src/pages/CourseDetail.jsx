@@ -1,27 +1,90 @@
-import React from 'react'
-import { useParams } from 'react-router-dom'
-import { motion } from 'framer-motion'
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import { motion } from "framer-motion";
+import { courseAPI } from "../services/api";
+import { useAuth } from "../context/AuthContext";
+import toast from "react-hot-toast";
 
 function CourseDetail() {
-  const { id } = useParams()
+  const { id } = useParams();
+  const { currentUser, isAuthenticated } = useAuth();
+  const [course, setCourse] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [enrolling, setEnrolling] = useState(false);
+  const [isEnrolled, setIsEnrolled] = useState(false);
 
-  // Mock course data (in real app, this would come from API)
-  const course = {
-    id: 1,
+  // Fetch course data
+  useEffect(() => {
+    fetchCourse();
+  }, [id]);
+
+  const fetchCourse = async () => {
+    try {
+      setLoading(true);
+      const response = await courseAPI.getCourse(id);
+
+      if (response.success) {
+        setCourse(response.data);
+        // Check if user is already enrolled
+        setIsEnrolled(response.data.isEnrolled || false);
+      } else {
+        throw new Error(response.error || "Failed to fetch course");
+      }
+    } catch (error) {
+      console.error("Error fetching course:", error);
+      toast.error("Failed to load course details");
+      // Use mock data as fallback
+      setCourse(mockCourse);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleEnroll = async () => {
+    if (!isAuthenticated) {
+      toast.error("Please login to enroll in this course");
+      return;
+    }
+
+    try {
+      setEnrolling(true);
+      const response = await courseAPI.enrollInCourse(id);
+
+      if (response.success) {
+        setIsEnrolled(true);
+        toast.success("Successfully enrolled in the course!");
+      } else {
+        throw new Error(response.error || "Enrollment failed");
+      }
+    } catch (error) {
+      console.error("Error enrolling:", error);
+      toast.error(error.message || "Failed to enroll in course");
+    } finally {
+      setEnrolling(false);
+    }
+  };
+
+  // Mock course data as fallback
+  const mockCourse = {
+    _id: id,
     title: "Complete Web Development Bootcamp",
     instructor: "Sarah Johnson",
-    instructorImage: "https://images.unsplash.com/photo-1494790108755-2616b612b5c4?w=150&h=150&fit=crop&crop=face",
+    instructorImage:
+      "https://images.unsplash.com/photo-1494790108755-2616b612b5c4?w=150&h=150&fit=crop&crop=face",
     rating: 4.9,
-    students: 12543,
+    studentsCount: 12543,
     price: 89,
     originalPrice: 129,
     category: "Web Development",
     level: "Beginner",
     duration: "40 hours",
-    lessons: 156,
+    lessonsCount: 156,
     language: "English",
     lastUpdated: "December 2024",
-    description: "Master web development from scratch with this comprehensive bootcamp. Learn HTML, CSS, JavaScript, React, Node.js and build amazing projects.",
+    description:
+      "Master web development from scratch with this comprehensive bootcamp. Learn HTML, CSS, JavaScript, React, Node.js and build amazing projects.",
+    thumbnail:
+      "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=1200&q=80",
     whatYouWillLearn: [
       "Build responsive websites with HTML5 and CSS3",
       "Master JavaScript and ES6+ features",
@@ -30,40 +93,68 @@ function CourseDetail() {
       "Work with databases (MongoDB and SQL)",
       "Deploy applications to the cloud",
       "Use Git and GitHub for version control",
-      "Build a complete full-stack project portfolio"
+      "Build a complete full-stack project portfolio",
     ],
     requirements: [
       "No prior programming experience required",
       "A computer with internet connection",
-      "Willingness to learn and practice"
+      "Willingness to learn and practice",
     ],
     curriculum: [
       {
         section: "HTML & CSS Fundamentals",
-        lessons: 25,
-        duration: "8 hours"
+        lessonsCount: 25,
+        duration: "8 hours",
       },
       {
         section: "JavaScript Mastery",
-        lessons: 35,
-        duration: "12 hours"
+        lessonsCount: 35,
+        duration: "12 hours",
       },
       {
         section: "React Development",
-        lessons: 45,
-        duration: "15 hours"
+        lessonsCount: 45,
+        duration: "15 hours",
       },
       {
         section: "Backend with Node.js",
-        lessons: 30,
-        duration: "10 hours"
+        lessonsCount: 30,
+        duration: "10 hours",
       },
       {
         section: "Database & Deployment",
-        lessons: 21,
-        duration: "7 hours"
-      }
-    ]
+        lessonsCount: 21,
+        duration: "7 hours",
+      },
+    ],
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-blue-900 dark:to-purple-900">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-xl text-gray-600 dark:text-gray-300">
+            Loading course details...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!course) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-blue-900 dark:to-purple-900">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+            Course not found
+          </h2>
+          <p className="text-gray-600 dark:text-gray-300">
+            The course you're looking for doesn't exist.
+          </p>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -72,12 +163,10 @@ function CourseDetail() {
       <section className="bg-gradient-to-br from-slate-800 to-purple-800 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col lg:flex-row items-center gap-8">
-            <div className="lg:w-2/3">
-              
-            </div>
+            <div className="lg:w-2/3"></div>
           </div>
         </div>
-        </section>
+      </section>
       <section className="pt-36 bg-gradient-to-r from-blue-600 to-purple-700 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -88,23 +177,27 @@ function CourseDetail() {
                 transition={{ duration: 0.8 }}
               >
                 <div className="flex flex-wrap items-center gap-4 mb-4">
-                  <span className="px-3 py-1 bg-white/20 rounded-full text-sm">{course.category}</span>
-                  <span className="px-3 py-1 bg-orange-500 rounded-full text-sm">Bestseller</span>
+                  <span className="px-3 py-1 bg-white/20 rounded-full text-sm">
+                    {course.category}
+                  </span>
+                  <span className="px-3 py-1 bg-orange-500 rounded-full text-sm">
+                    Bestseller
+                  </span>
                 </div>
-                
+
                 <h1 className="text-4xl md:text-5xl font-bold mb-4">
                   {course.title}
                 </h1>
-                
-                <p className="text-xl mb-6">
-                  {course.description}
-                </p>
+
+                <p className="text-xl mb-6">{course.description}</p>
 
                 <div className="flex flex-wrap items-center gap-6 mb-6">
                   <div className="flex items-center space-x-1">
                     <span className="text-yellow-400">⭐</span>
                     <span className="font-medium">{course.rating}</span>
-                    <span className="text-blue-100">({course.students.toLocaleString()} students)</span>
+                    <span className="text-blue-100">
+                      ({course.studentsCount?.toLocaleString() || 0} students)
+                    </span>
                   </div>
                   <div className="text-blue-100">
                     Created by {course.instructor}
@@ -121,7 +214,7 @@ function CourseDetail() {
                   </div>
                   <div className="flex items-center space-x-2">
                     <span>📚</span>
-                    <span>{course.lessons} lessons</span>
+                    <span>{course.lessonsCount} lessons</span>
                   </div>
                   <div className="flex items-center space-x-2">
                     <span>⏱️</span>
@@ -143,15 +236,18 @@ function CourseDetail() {
                 transition={{ delay: 0.3, duration: 0.8 }}
                 className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-2xl"
               >
-                <div className="w-full h-48 bg-gradient-to-br from-blue-400 to-purple-500 rounded-xl mb-6 flex items-center justify-center"
+                <div
+                  className="w-full h-48 bg-gradient-to-br from-blue-400 to-purple-500 rounded-xl mb-6 flex items-center justify-center"
                   style={{
-                  backgroundImage: "url('https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=1200&q=80')",
-                  backgroundSize: "cover",
-                  backgroundPosition: "center",
-                  backgroundRepeat: "no-repeat",
-                  opacity: 0.7
-                }}>
-                </div>
+                    backgroundImage: `url('${
+                      course.thumbnail ||
+                      "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=1200&q=80"
+                    }')`,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                    backgroundRepeat: "no-repeat",
+                  }}
+                ></div>
 
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center space-x-2">
@@ -162,17 +258,27 @@ function CourseDetail() {
                       ${course.originalPrice}
                     </div>
                   </div>
-                  <div className="text-green-600 font-medium">
-                    31% off
-                  </div>
+                  <div className="text-green-600 font-medium">31% off</div>
                 </div>
 
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="w-full py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-lg mb-4 hover:shadow-lg transition-all duration-300"
+                  onClick={handleEnroll}
+                  disabled={enrolling || isEnrolled}
+                  className={`w-full py-3 font-semibold rounded-lg mb-4 transition-all duration-300 ${
+                    isEnrolled
+                      ? "bg-green-600 text-white cursor-not-allowed"
+                      : enrolling
+                      ? "bg-gray-400 text-white cursor-not-allowed"
+                      : "bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:shadow-lg"
+                  }`}
                 >
-                  Enroll Now
+                  {enrolling
+                    ? "Enrolling..."
+                    : isEnrolled
+                    ? "Already Enrolled"
+                    : "Enroll Now"}
                 </motion.button>
 
                 <motion.button
@@ -227,7 +333,9 @@ function CourseDetail() {
                   {course.whatYouWillLearn.map((item, index) => (
                     <div key={index} className="flex items-start space-x-3">
                       <span className="text-green-500 mt-1">✓</span>
-                      <span className="text-gray-700 dark:text-gray-300">{item}</span>
+                      <span className="text-gray-700 dark:text-gray-300">
+                        {item}
+                      </span>
                     </div>
                   ))}
                 </div>
@@ -246,13 +354,16 @@ function CourseDetail() {
                 </h2>
                 <div className="space-y-4">
                   {course.curriculum.map((section, index) => (
-                    <div key={index} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                    <div
+                      key={index}
+                      className="border border-gray-200 dark:border-gray-700 rounded-lg p-4"
+                    >
                       <div className="flex items-center justify-between">
                         <h3 className="font-semibold text-gray-900 dark:text-white">
                           {section.section}
                         </h3>
                         <div className="text-sm text-gray-600 dark:text-gray-300">
-                          {section.lessons} lessons • {section.duration}
+                          {section.lessonsCount} lessons • {section.duration}
                         </div>
                       </div>
                     </div>
@@ -275,7 +386,9 @@ function CourseDetail() {
                   {course.requirements.map((req, index) => (
                     <li key={index} className="flex items-start space-x-3">
                       <span className="text-blue-500 mt-1">•</span>
-                      <span className="text-gray-700 dark:text-gray-300">{req}</span>
+                      <span className="text-gray-700 dark:text-gray-300">
+                        {req}
+                      </span>
                     </li>
                   ))}
                 </ul>
@@ -299,8 +412,12 @@ function CourseDetail() {
                     SJ
                   </div>
                   <div>
-                    <h3 className="font-bold text-gray-900 dark:text-white">{course.instructor}</h3>
-                    <p className="text-gray-600 dark:text-gray-300">Senior Web Developer</p>
+                    <h3 className="font-bold text-gray-900 dark:text-white">
+                      {course.instructor}
+                    </h3>
+                    <p className="text-gray-600 dark:text-gray-300">
+                      Senior Web Developer
+                    </p>
                   </div>
                 </div>
                 <div className="space-y-3 text-sm text-gray-600 dark:text-gray-300">
@@ -318,8 +435,10 @@ function CourseDetail() {
                   </div>
                 </div>
                 <p className="text-gray-700 dark:text-gray-300 mt-4">
-                  Sarah is a senior web developer with 8+ years of experience building scalable web applications. 
-                  She has worked with companies like Google and Microsoft and is passionate about teaching.
+                  Sarah is a senior web developer with 8+ years of experience
+                  building scalable web applications. She has worked with
+                  companies like Google and Microsoft and is passionate about
+                  teaching.
                 </p>
               </motion.div>
             </div>
@@ -327,7 +446,7 @@ function CourseDetail() {
         </div>
       </section>
     </div>
-  )
+  );
 }
 
-export default CourseDetail
+export default CourseDetail;
