@@ -1,4 +1,0 @@
-password : <use cluster password>
-username : <use cluster username>
-
-project : courseapp

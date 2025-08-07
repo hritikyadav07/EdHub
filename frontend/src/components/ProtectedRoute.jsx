@@ -5,9 +5,9 @@ import { motion } from 'framer-motion'
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
 
 const ProtectedRoute = ({ children, adminOnly = false }) => {
-  const { user, isLoading } = useAuth()
+  const { currentUser, loading } = useAuth()
 
-  if (isLoading) {
+  if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
@@ -15,11 +15,11 @@ const ProtectedRoute = ({ children, adminOnly = false }) => {
     )
   }
 
-  if (!user) {
+  if (!currentUser) {
     return <Navigate to="/login" replace />
   }
 
-  if (adminOnly && user.role !== 'admin') {
+  if (adminOnly && currentUser.role !== 'admin') {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
         <motion.div
