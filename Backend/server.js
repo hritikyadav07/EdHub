@@ -1,21 +1,22 @@
-import express from 'express';
-import mongoose from 'mongoose';
-import dotenv from 'dotenv';
-import cors from 'cors';
-import cookieParser from 'cookie-parser';
+import express from "express";
+import mongoose from "mongoose";
+import dotenv from "dotenv";
+import cors from "cors";
+import cookieParser from "cookie-parser";
 
 // Import routes
-import authRoutes from './routes/auth.js';
-import courseRoutes from './routes/courses.js';
-import enrollmentRoutes from './routes/enrollments.js';
-import adminRoutes from './routes/admin.js';
+import authRoutes from "./routes/auth.js";
+import courseRoutes from "./routes/courses.js";
+import enrollmentRoutes from "./routes/enrollments.js";
+import adminRoutes from "./routes/admin.js";
 
 // Load config
 dotenv.config();
 const mongoUri = process.env.MONGO_URI;
 
 // Connect to database
-mongoose.connect(mongoUri, { dbName: "edhub" })
+mongoose
+  .connect(mongoUri, { dbName: "edhub" })
   .then(() => console.log("MongoDB connected successfully...!"))
   .catch((err) => console.error("MongoDB connection error:", err));
 
@@ -23,30 +24,46 @@ mongoose.connect(mongoUri, { dbName: "edhub" })
 const app = express();
 
 // Middleware
-app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
-  credentials: true
-}));
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      const allowedOrigins = [
+        "http://localhost:5173",
+        process.env.FRONTEND_URL,
+      ].filter(Boolean);
+
+      // Allow requests with no origin (mobile apps, etc.)
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  })
+);
 app.use(express.json());
 app.use(cookieParser());
 
 // Routes
-app.get('/', (req, res) => {
+app.get("/", (req, res) => {
   res.json({ message: "Welcome to EdHub API" });
 });
 
 // Mount routers
-app.use('/api/auth', authRoutes); //all auth routes working properly - tested with postman
-app.use('/api/courses', courseRoutes); //all course routes working properly - tested with postman
-app.use('/api/enrollments', enrollmentRoutes); //all enrollment routes working properly - tested with postman
-app.use('/api/admin', adminRoutes); //all admin routes working properly - tested with postman
+app.use("/api/auth", authRoutes); //all auth routes working properly - tested with postman
+app.use("/api/courses", courseRoutes); //all course routes working properly - tested with postman
+app.use("/api/enrollments", enrollmentRoutes); //all enrollment routes working properly - tested with postman
+app.use("/api/admin", adminRoutes); //all admin routes working properly - tested with postman
 
 // Error handler
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({
     success: false,
-    error: 'Server Error'
+    error: "Server Error",
   });
 });
 
