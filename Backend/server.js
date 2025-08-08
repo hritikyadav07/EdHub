@@ -31,7 +31,8 @@ app.use(
         "http://localhost:5173", // Local development
         "http://localhost:5174", // Alternative local port
         "http://localhost:3000", // Alternative local port
-        "https://ed-hub-frontend-git-main-hritik-yadavs-projects.vercel.app", // Vercel deployment
+        "https://ed-hub-frontend-git-main-hritik-yadavs-projects.vercel.app", // Frontend Vercel deployment
+        "https://ed-hub-git-main-hritik-yadavs-projects.vercel.app", // Backend Vercel deployment (for API calls)
         process.env.FRONTEND_URL, // Environment variable
       ].filter(Boolean);
 
@@ -39,7 +40,8 @@ app.use(
       const isVercelApp =
         origin &&
         (origin.includes("hritik-yadavs-projects.vercel.app") ||
-          origin.includes("vercel.app"));
+          origin.includes("vercel.app") ||
+          origin.includes("ed-hub"));
 
       // Allow requests with no origin (mobile apps, etc.)
       if (!origin) return callback(null, true);
