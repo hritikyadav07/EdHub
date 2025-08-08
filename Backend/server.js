@@ -25,9 +25,31 @@ const app = express();
 
 app.use(
   cors({
-    origin: "*", // TEMPORARILY allow all
+    origin: function (origin, callback) {
+      const allowedOrigins = [
+        "http://localhost:5173",
+        "https://edhub.hritikyadav.me",
+        process.env.FRONTEND_URL,
+      ].filter(Boolean);
+
+      const isVercelApp =
+        origin &&
+        (origin.includes("hritik-yadavs-projects.vercel.app") ||
+          origin.includes("vercel.app") ||
+          origin.includes("ed-hub"));
+
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.includes(origin) || isVercelApp) {
+        callback(null, origin); // ✅ return origin here, not true
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+    optionsSuccessStatus: 200,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
   })
 );
 
