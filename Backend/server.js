@@ -28,14 +28,19 @@ app.use(
   cors({
     origin: function (origin, callback) {
       const allowedOrigins = [
-        "http://localhost:5173",
-        process.env.FRONTEND_URL,
+        "http://localhost:5173", // Local development
+        "https://ed-hub-frontend-git-main-hritik-yadavs-projects.vercel.app", // Vercel deployment
+        process.env.FRONTEND_URL, // Environment variable
       ].filter(Boolean);
+
+      // Also allow any vercel app URLs for this project
+      const isVercelApp =
+        origin && origin.includes("hritik-yadavs-projects.vercel.app");
 
       // Allow requests with no origin (mobile apps, etc.)
       if (!origin) return callback(null, true);
 
-      if (allowedOrigins.includes(origin)) {
+      if (allowedOrigins.includes(origin) || isVercelApp) {
         callback(null, true);
       } else {
         callback(new Error("Not allowed by CORS"));
