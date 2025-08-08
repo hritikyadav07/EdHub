@@ -29,10 +29,7 @@ app.use(
     origin: function (origin, callback) {
       const allowedOrigins = [
         "http://localhost:5173", // Local development
-        "http://localhost:5174", // Alternative local port
-        "http://localhost:3000", // Alternative local port
-        "https://ed-hub-frontend-git-main-hritik-yadavs-projects.vercel.app", // Frontend Vercel deployment
-        "https://ed-hub-git-main-hritik-yadavs-projects.vercel.app", // Backend Vercel deployment (for API calls)
+        "https://edhub.hritikyadav.me",
         process.env.FRONTEND_URL, // Environment variable
       ].filter(Boolean);
 
