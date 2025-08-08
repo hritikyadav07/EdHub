@@ -29,7 +29,7 @@ app.use(
     origin: function (origin, callback) {
       const allowedOrigins = [
         "http://localhost:5173", // Local development
-        "http://localhost:5174", // Alternative local port 
+        "http://localhost:5174", // Alternative local port
         "http://localhost:3000", // Alternative local port
         "https://ed-hub-frontend-git-main-hritik-yadavs-projects.vercel.app", // Vercel deployment
         process.env.FRONTEND_URL, // Environment variable
@@ -37,10 +37,9 @@ app.use(
 
       // Also allow any vercel app URLs for this project
       const isVercelApp =
-        origin && (
-          origin.includes("hritik-yadavs-projects.vercel.app") ||
-          origin.includes("vercel.app")
-        );
+        origin &&
+        (origin.includes("hritik-yadavs-projects.vercel.app") ||
+          origin.includes("vercel.app"));
 
       // Allow requests with no origin (mobile apps, etc.)
       if (!origin) return callback(null, true);
@@ -55,8 +54,8 @@ app.use(
     },
     credentials: true,
     optionsSuccessStatus: 200,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
   })
 );
 app.use(express.json());
