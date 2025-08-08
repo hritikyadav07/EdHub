@@ -1,24 +1,14 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
-import tailwindcss from "@tailwindcss/vite";
 
-// https://vitejs.dev/config/
+// Minimal config without TailwindCSS plugin for deployment
 export default defineConfig(({ mode }) => ({
-  plugins: [react(), tailwindcss()],
+  plugins: [react()],
   build: {
     outDir: "dist",
     sourcemap: false,
-    minify: "terser",
-    target: "es2015",
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          vendor: ["react", "react-dom"],
-          router: ["react-router-dom"],
-          ui: ["framer-motion", "@headlessui/react", "@heroicons/react"],
-        },
-      },
-    },
+    minify: false,
+    target: "es2020"
   },
   server: {
     port: 5173,
