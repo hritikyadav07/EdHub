@@ -29,24 +29,33 @@ app.use(
     origin: function (origin, callback) {
       const allowedOrigins = [
         "http://localhost:5173", // Local development
+        "http://localhost:3000", // Alternative local port
         "https://ed-hub-frontend-git-main-hritik-yadavs-projects.vercel.app", // Vercel deployment
         process.env.FRONTEND_URL, // Environment variable
       ].filter(Boolean);
 
       // Also allow any vercel app URLs for this project
       const isVercelApp =
-        origin && origin.includes("hritik-yadavs-projects.vercel.app");
+        origin && (
+          origin.includes("hritik-yadavs-projects.vercel.app") ||
+          origin.includes("vercel.app")
+        );
 
       // Allow requests with no origin (mobile apps, etc.)
       if (!origin) return callback(null, true);
 
       if (allowedOrigins.includes(origin) || isVercelApp) {
+        console.log(`CORS: Allowing origin ${origin}`);
         callback(null, true);
       } else {
+        console.log(`CORS: Blocking origin ${origin}`);
         callback(new Error("Not allowed by CORS"));
       }
     },
     credentials: true,
+    optionsSuccessStatus: 200,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
   })
 );
 app.use(express.json());
