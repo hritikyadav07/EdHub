@@ -23,40 +23,15 @@ mongoose
 // Initialize app
 const app = express();
 
-// Middleware
 app.use(
   cors({
-    origin: function (origin, callback) {
-      const allowedOrigins = [
-        "http://localhost:5173", // Local development
-        "https://edhub.hritikyadav.me",
-        process.env.FRONTEND_URL, // Environment variable
-      ].filter(Boolean);
-
-      // Also allow any vercel app URLs for this project
-      const isVercelApp =
-        origin &&
-        (origin.includes("hritik-yadavs-projects.vercel.app") ||
-          origin.includes("vercel.app") ||
-          origin.includes("ed-hub"));
-
-      // Allow requests with no origin (mobile apps, etc.)
-      if (!origin) return callback(null, true);
-
-      if (allowedOrigins.includes(origin) || isVercelApp) {
-        console.log(`CORS: Allowing origin ${origin}`);
-        callback(null, true);
-      } else {
-        console.log(`CORS: Blocking origin ${origin}`);
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    credentials: true,
-    optionsSuccessStatus: 200,
+    origin: "*", // TEMPORARILY allow all
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
+
+
 app.use(express.json());
 app.use(cookieParser());
 
