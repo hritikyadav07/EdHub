@@ -1,4 +1,6 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 /* Global font family */
 * {
@@ -13,11 +15,6 @@ body {
 :root {
   --toast-bg: #ffffff;
   --toast-color: #1f2937;
-}
-
-.dark {
-  --toast-bg: #1f2937;
-  --toast-color: #ffffff;
 }
 
 /* Smooth scrolling */
@@ -41,17 +38,4 @@ html {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #2563eb;
-}
-
-/* Dark mode scrollbar */
-.dark ::-webkit-scrollbar-track {
-  background: #374151;
-}
-
-.dark ::-webkit-scrollbar-thumb {
-  background: #6b7280;
-}
-
-.dark ::-webkit-scrollbar-thumb:hover {
-  background: #9ca3af;
 }
