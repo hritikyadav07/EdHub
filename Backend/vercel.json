@@ -1,21 +1,18 @@
 {
   "version": 2,
-  "rewrites": [
+  "builds": [
     {
-      "source": "/api/(.*)",
-      "destination": "/server.js"
-    },
+      "src": "server.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
     {
-      "source": "/(.*)",
-      "destination": "/server.js"
+      "src": "/(.*)",
+      "dest": "/server.js"
     }
   ],
   "env": {
     "NODE_ENV": "production"
-  },
-  "functions": {
-    "server.js": {
-      "maxDuration": 10
-    }
   }
 }
